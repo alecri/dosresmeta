@@ -91,7 +91,8 @@ NULL
 #'
 #'
 #' @method coef dosresmeta  
-#' @export coef.dosresmeta
+#' @export
+
 
 coef.dosresmeta <- function (object, format = c("vector", "matrix"), ...){
    coef <- object$coefficients
@@ -107,7 +108,7 @@ coef.dosresmeta <- function (object, format = c("vector", "matrix"), ...){
 
 #' @rdname coef.dosresmeta
 #' @method vcov dosresmeta
-#' @export vcov.dosresmeta
+#' @export
 
 vcov.dosresmeta <- function(object, ...){
    return(object$vcov)
@@ -202,8 +203,7 @@ logLik.dosresmeta <- function (object, ...){
 #'
 #' @rdname summary.dosresmeta
 #' @method print dosresmeta
-#' @aliases print print.dosresmeta
-#' @export print.dosresmeta
+#' @export
 
 print.dosresmeta <- function (x, digits = 4, ...){
    cat("Call:  ", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
@@ -224,8 +224,7 @@ print.dosresmeta <- function (x, digits = 4, ...){
 
 #' @rdname summary.dosresmeta
 #' @method summary dosresmeta
-#' @aliases summary summary.dosresmeta
-#' @export summary.dosresmeta
+#' @export
 
 summary.dosresmeta <- function(object, ci.level = 0.95, ...){
    if (ci.level <= 0 || ci.level >= 1) 
@@ -273,8 +272,8 @@ summary.dosresmeta <- function(object, ci.level = 0.95, ...){
 
 #' @rdname summary.dosresmeta
 #' @method print summary.dosresmeta
-#' @aliases print print.summary.dosresmeta
-#' @export print.summary.dosresmeta
+#' @export
+
 print.summary.dosresmeta <- function(x, digits = 4, ...){
    methodname <- c("reml", "ml", "fixed")
    methodlabel <- c("REML", "ML", "Fixed")
@@ -382,7 +381,7 @@ print.summary.dosresmeta <- function(x, digits = 4, ...){
 #' a zero matrix, and there is no random deviation in study-specific estimates.
 #' 
 #' @method qtest dosresmeta
-#' @export qtest.dosresmeta
+#' @export
 
 qtest.dosresmeta <- function (object, ...){
    if (object$proc == "1stage") return(NULL)
@@ -390,7 +389,10 @@ qtest.dosresmeta <- function (object, ...){
    id <- object$id
    bi <- object$bi
    Si <- object$Si
-   Xstar <- model.matrix(object$mod, do.call("rbind", lapply(split(mf, id), head, 1)))
+   v <- object$v
+   Xstar <- model.matrix(object$mod, do.call("rbind", 
+                                             lapply(lapply(unique(id), function(j) 
+                                                mf[v!=0 &id == j, , drop = FALSE]), head, 1)))
    nabi <- is.na(bi)
    bilist <- lapply(seq(object$dim$m), function(i) bi[i, ][!nabi[i, ]])
    Xstarlist <- lapply(seq(object$dim$m), function(i) 
@@ -481,8 +483,7 @@ qtest.dosresmeta <- function (object, ...){
 
 #' @rdname qtest.dosresmeta
 #' @method print qtest.dosresmeta
-#' @aliases print.qtest.dosresmeta
-#' @export print.qtest.dosresmeta
+#' @export
 
 print.qtest.dosresmeta <- function (x, digits = 3, ...){
    signif <- symnum(x$pvalue, corr = FALSE, na = FALSE, 
@@ -580,7 +581,7 @@ print.qtest.dosresmeta <- function (x, digits = 3, ...){
 #' 
 #' @rdname predict.dosresmeta
 #' @method predict dosresmeta
-#' @export predict.dosresmeta
+#' @export
 
 predict.dosresmeta <- function(object, newdata, xref, expo = FALSE,
                                ci.incl = TRUE, se.incl = FALSE, 
@@ -611,7 +612,7 @@ predict.dosresmeta <- function(object, newdata, xref, expo = FALSE,
    if (object$center){
       X <- scale(X, X.ref, scale = FALSE)
    }
-   pred <- tcrossprod(X, rbind(object$coefficients))
+   pred <- tcrossprod(X, rbind(c(object$coefficients)))
    fit <- if (expo == T) {
       cbind(fit, exp(pred))
    } else {
@@ -672,7 +673,7 @@ predict.dosresmeta <- function(object, newdata, xref, expo = FALSE,
 #' blup(quadr)
 #' 
 #' @method blup dosresmeta
-#' @export blup.dosresmeta
+#' @export 
 
 blup.dosresmeta <- function(object, ...){
    if (object$method == "fixed") stop("blup predictions are available only for random-effects model")
