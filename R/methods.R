@@ -612,7 +612,7 @@ predict.dosresmeta <- function(object, newdata, xref, expo = FALSE,
    if (object$center){
       X <- scale(X, X.ref, scale = FALSE)
    }
-   pred <- tcrossprod(X, as.vector(t(object$coefficients)))
+   pred <- tcrossprod(X, rbind(c(t(object$coefficients))))
    fit <- if (expo == T) {
       cbind(fit, exp(pred))
    } else {
