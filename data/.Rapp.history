@@ -1,0 +1,4 @@
+load("/Users/alecri/Dropbox/KI/Packages/dosresmeta/dosresmeta2.0/data/coffee_stroke.rda")
+ls()
+load("/Users/alecri/Dropbox/KI/Packages/dosresmeta/dosresmeta2.0/data/cc_ex.rda")
+load("/Users/alecri/Dropbox/KI/Packages/dosresmeta/dosresmeta2.0/data/coffee_stroke.rda")
