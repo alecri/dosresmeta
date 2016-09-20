@@ -1,0 +1,22 @@
+bibentry(bibtype = "Article",
+  title        = "Multivariate Dose-Response Meta-Analysis: The {dosresmeta} {R} Package",
+  author       = c(person(given = "Alessio",
+                          family = "Crippa",
+                          email = "alessio.crippa@ki.se"),
+                   person(given = "Nicola",
+                          family = "Orsini")),
+  journal      = "Journal of Statistical Software, Code Snippets",
+  year         = "2016",
+  volume       = "72",
+  number       = "1",
+  pages        = "1--15",
+  doi          = "10.18637/jss.v072.c01",
+
+  header       = "To cite dosresmeta in publications use:",
+  textVersion  =
+  paste("Alessio Crippa, Nicola Orsini (2016).",
+        "Multivariate Dose-Response Meta-Analysis: The dosresmeta R Package.",
+        "Journal of Statistical Software, Code Snippets, 72(1), 1-15.",
+        "doi:10.18637/jss.v072.c01")
+)
+

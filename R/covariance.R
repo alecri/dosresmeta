@@ -277,14 +277,15 @@ hamling <- function(y, v, cases, n, type, data){
    type <- eval(mf.type, data, enclos = sys.frame(sys.parent()))
    if (is.null(type)) 
       type <- as.vector(mf.type)
+   ## consistent with glst2.ado and ecov.ado
    p0 <- if (as.character(type[1]) == "cc")
       (n - cases)[v==0]/sum(n - cases)
    else
       n[v==0]/sum(n)
    z0 <- if (as.character(type[1]) == "cc")
-      sum(n - cases)/sum(cases)
+      sum((n - cases)[v!=0])/sum(cases[v!=0])
    else
-      sum(n)/sum(cases)
+      sum(n[v!=0])/sum(cases[v!=0])
    init <- c(cases[v==0], n[v==0])
    opt <- optim(init, fun.h, v = v, y = y, type = type, p0 = p0, z0 = z0)
    pscounts <- est.ps.h(opt$par, v, y, type)
@@ -312,11 +313,11 @@ fun.h <- function(par, v, y, type, p0, z0){
    ps <- est.ps.h(par, v, y, type)
    if (as.character(type[1]) == "cc"){
       p1 <- (ps[v==0, 2] - ps[v==0, 1])/(sum(ps[, 2] - ps[, 1]))
-      z1 <- sum(ps[, 2] - ps[, 1])/sum(ps[, 1])
+      z1 <- sum(ps[v!=0, 2] - ps[v!=0, 1])/sum(ps[v!=0, 1])
    }
    else {
       p1 <- ps[v==0, 2]/sum(ps[, 2])
-      z1 <- sum(ps[, 2])/sum(ps[, 1])
+      z1 <- sum(ps[v!=0, 2])/sum(ps[v!=0, 1])
    }
    ((p1 - p0)/p0)^2+((z1 - z0)/z0)^2
 }
@@ -414,4 +415,61 @@ grl <- function(y, v, cases, n, type, data, tol = 1e-05){
       Ax <- Axp
    }
    cbind(A = Axp, N = n)
+}
+
+#' @noRd
+change_ref <- function(y, v, cases, n, type, data, ref = 1,
+                       method = "hamling", expo = FALSE){
+   if (missing(data)) 
+      data <- NULL
+   if (is.null(data)) {
+      data <- sys.frame(sys.parent())
+   }
+   else {
+      if (!is.data.frame(data)) {
+         data <- data.frame(data)
+      }
+   }
+   mf <- match.call(expand.dots = FALSE)
+   mf.y <- mf[[match("y", names(mf))]]
+   mf.v <- mf[[match("v", names(mf))]]
+   mf.cases <- mf[[match("cases", names(mf))]]
+   mf.n <- mf[[match("n", names(mf))]]
+   mf.type <- mf[[match("type", names(mf))]]
+   y <- eval(mf.y, data, enclos = sys.frame(sys.parent()))
+   v <- eval(mf.v, data, enclos = sys.frame(sys.parent()))
+   v[is.na(v)] <- 0
+   cases <- eval(mf.cases, data, enclos = sys.frame(sys.parent()))
+   n <- eval(mf.n, data, enclos = sys.frame(sys.parent()))
+   type <- eval(mf.type, data, enclos = sys.frame(sys.parent()))
+   if (is.null(type)) 
+      type <- as.vector(mf.type)
+   ps <- if (method == "hamling"){
+      hamling(y, v, cases, n, type)
+   } else if (method == "gl"){
+      grl(y, v, cases, n, type)
+   }
+   rr <- if (type[1] == "cc"){
+      (ps[, 1]*(ps[ref, 2] - ps[ref, 1]))/(ps[ref, 1]*(ps[, 2] - ps[, 1]))
+   } else {
+      (ps[, 1]/ps[, 2])/(ps[ref, 1]/ps[ref, 2])
+   }
+   var_logrr <- if (type[1] == "cc"){
+      1/ps[, 1] + 1/(ps[, 2] - ps[, 1]) + 1/ps[ref, 1] + 1/(ps[ref, 2] - ps[ref, 1])
+   } else if (type[1] == "ci") {
+      1/ps[, 1] - 1/ps[, 2] + 1/ps[ref, 1] - 1/ps[ref, 2]
+   } else if (type[1] == "ir") {
+      1/ps[, 1] + 1/ps[, 2]
+   }
+   var_logrr[ref] <- 0
+   lb_rr <- exp(log(rr) - qnorm(.975)*sqrt(var_logrr))
+   ub_rr <- exp(log(rr) + qnorm(.975)*sqrt(var_logrr))
+   dat <- if (expo){
+      data.frame(ps, rr = rr, lb_rr = lb_rr, ub_rr = ub_rr)
+   } else {
+      data.frame(ps, logrr = log(rr), v = var_logrr, 
+                 loglbrr = log(lb_rr), logubrr = log(ub_rr))
+   }
+   colnames(dat) <- paste(colnames(dat), ref, sep = ".")
+   return(dat)
 }
