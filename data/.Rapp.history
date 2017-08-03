@@ -2,3 +2,7 @@ load("/Users/alecri/Dropbox/KI/Packages/dosresmeta/dosresmeta2.0/data/coffee_str
 ls()
 load("/Users/alecri/Dropbox/KI/Packages/dosresmeta/dosresmeta2.0/data/cc_ex.rda")
 load("/Users/alecri/Dropbox/KI/Packages/dosresmeta/dosresmeta2.0/data/coffee_stroke.rda")
+load("/Users/alecri/Dropbox/KI/Packages/dosresmeta/dosresmeta2.0/data/coffee_stroke.rda")
+ls()
+coffee_stroke = coffee
+save(coffee_stroke, file = "/Users/alecri/Dropbox/KI/Packages/dosresmeta/dosresmeta2.0/data/coffee_stroke.rda")
