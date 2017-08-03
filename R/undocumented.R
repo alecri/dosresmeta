@@ -153,8 +153,7 @@ waldtest <- function(Sigma, b, Terms = NULL, L = NULL, H0 = NULL){
 
 #' @rdname waldtest
 #' @method print waldtest
-#' @aliases print.waldtest
-#' @export print.waldtest
+#' @export
 print.waldtest <- function (x, digits = 2, ...){
    Terms <- x[["Terms"]]
    b <- x[["b"]]

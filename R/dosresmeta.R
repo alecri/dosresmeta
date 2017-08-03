@@ -1,4 +1,4 @@
-#' Performing multivariate dose-response meta-analysis
+#' Performing Multivariate Dose-Response Meta-Analysis
 #' 
 #' @description The function \code{dosresmeta} estimates a dose-response curve from either single or multiple summarized dose-response data, taking into account 
 #' the correlation among observations and heterogeneity across studies. The function \code{dosresmeta.fit} is a wrapper for actual fitting functions based on 
@@ -231,18 +231,18 @@ dosresmeta <- function(formula, id, v, type,  cases, n, sd, data,
    nay <- is.na(y)
    ylist <- lapply(unique(id), function(j) y[id == j, ][!nay[j, ]])
    vlist <- lapply(unique(id), function(j) cbind(v[id == j]))
-   nalist <- split(nay, id)
+   nalist <- lapply(unique(id), function(j) nay[id == j])
    if (covariance %in% c("gl", "h")){
-      caseslist <- split(cases, id)
-      nlist <- split(n, id)
-      typelist <- split(type, id)
+      caseslist <- lapply(unique(id), function(j) cases[id == j])
+      nlist <- lapply(unique(id), function(j) n[id == j])
+      typelist <- lapply(unique(id), function(j) type[id == j])
       Slist <- mapply(function(cases, n, y, v, type) 
          covar.logrr(cases, n, y, v, type, covariance = covariance), 
          caseslist, nlist, ylist, vlist, typelist, SIMPLIFY = FALSE)
    }
    if (covariance %in% c("md", "smd")){
-      sdlist <- split(sd, id)
-      nlist <- split(n, id)
+      sdlist <- lapply(unique(id), function(j) sd[id == j])
+      nlist <- lapply(unique(id), function(j) n[id == j])
       if (covariance == "smd") 
          method.smd <- match.arg(method.smd, c("cohens", "hedges", "glass"))
       covlist <- mapply(function(y, sd, n)
@@ -325,7 +325,7 @@ dosresmeta.fit <- function (X, Z, y, Slist, id, method, control,
       !nay[j, ], , drop = FALSE])
    Zlist <- lapply(unique(id), function(j) Z[id == j, , drop = FALSE][
       !nay[j, ], , drop = FALSE])
-   nalist <- split(nay, id)
+   nalist <- lapply(unique(id), function(j) nay[id == j])
    if (proc == "2stage"){
       ## obs: the argument of dosresmeta.fixed need to be list and since mapply
       ## requires additional list, I had to use lapply(. , . list(.))
@@ -340,7 +340,7 @@ dosresmeta.fit <- function (X, Z, y, Slist, id, method, control,
       dimnames(beta) <- list(unique(id), nq)
       Sbeta <- do.call("list", lapply(twoStage, function(x) x$vcov))
       Xstar <- model.matrix(mod, do.call("rbind", 
-                                         lapply(split(data[v!=0, ], id), head, 1)))
+                                         lapply(lapply(unique(id), function(j) data[v!=0, ][id == j, ]), head, 1)))
       fit <- mvmeta.fit(X = Xstar, y = beta, 
                         S = do.call("rbind", lapply(Sbeta, vechMat)), 
                         method = method)
