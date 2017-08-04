@@ -511,9 +511,11 @@ print.qtest.dosresmeta <- function (x, digits = 3, ...){
 #' @param newdata an optional data frame or matrix in which to look for variables values with which to predict from dose-response models.
 #' @param xref an optional scalar to indicate which levels should serve as referent for the predicted relative risks. See details.
 #' @param expo logical switch indicating if the prediction should be on the exponential scale.
+#' @param xref_vec an optional numeric to indicate the referent (vector) for the predicted relative risks. See details.
 #' @param se.incl logical switch indicating if standard errors need to be included.
 #' @param ci.incl logical switch indicating if confidence intervals need to be included.
 #' @param ci.level a numerical value between 0 and 1, specifying the confidence level for the computation of confidence intervals.
+#' @param xref_pos an optional scalar to indicate the position of the referent for the predicted relative risks. See details.
 #' @param order logical to indicate if the predictions need to be sorted by exposure levels.
 #' @param delta an optional scalar to specify to predict the linear trend related to that increase.
 #' @param \dots further arguments passed to or from other methods.
@@ -583,16 +585,24 @@ print.qtest.dosresmeta <- function (x, digits = 3, ...){
 #' @method predict dosresmeta
 #' @export
 
-predict.dosresmeta <- function(object, newdata, xref, expo = FALSE,
-                               ci.incl = TRUE, se.incl = FALSE, 
+predict.dosresmeta <- function(object, newdata, xref, expo = FALSE, xref_vec,
+                               ci.incl = TRUE, se.incl = FALSE, xref_pos = 1,
                                delta, order = FALSE, ci.level = 0.95, ...){
    if (!missing(delta)){
       if (object$dim$q > 1L)
          stop("'delta' option available only for linear trend")
-      if (missing(xref)) xref <- 0
       mf <- model.frame(object)
-      mf[1, 2] <- xref
-      mf[2, 2] <- xref + delta 
+      xref_delta <- if (missing(xref_vec)){
+         if (missing(xref)){
+            0
+         } else {
+            xref
+         }
+      } else {
+         xref_vec
+      }
+      mf[1, 2] <- xref_delta
+      mf[2, 2] <- xref_delta + delta
       X <- model.matrix(attr(mf, "terms"), data = mf)[1:2, , drop = FALSE]
       X <- X[, -grep("Intercept", colnames(X)), drop = FALSE]
    } else if (missing(newdata) || is.null(newdata)){
@@ -603,14 +613,21 @@ predict.dosresmeta <- function(object, newdata, xref, expo = FALSE,
       mf <- model.frame(ttnr, newdata)
       X <- model.matrix(ttnr, mf, contrasts.arg = object$contrasts)[, -1, drop = FALSE]
    }
-   if (missing(xref))
-      X.ref <- X[1, , drop = FALSE]
-   else{
-      X.ref <- X[X[, 1] == xref, , drop = FALSE][1, , drop = FALSE]
+   xref <- if (missing(xref_vec)){
+      if (missing(xref)){
+         X[xref_pos, ]
+      } else {
+         X[X[, 1] == xref, , drop = FALSE][1, ]
+      }
+   } else {
+      xref_vec
+   }
+   if (!missing(delta)){
+      xref <- xref_delta
    }
    fit <- X
    if (object$center){
-      X <- scale(X, X.ref, scale = FALSE)
+      X <- scale(X, xref, scale = FALSE)
    }
    pred <- tcrossprod(X, rbind(c(t(object$coefficients))))
    fit <- if (expo == T) {
@@ -639,6 +656,7 @@ predict.dosresmeta <- function(object, newdata, xref, expo = FALSE,
       fit <- fit[order(fit[, 1]), ]      
    }
    if (!missing(delta)){
+      fit[1] <- delta
       fit <- fit[fit["ci.lb"] != fit["ci.ub"], ]
       colnames(fit)[1] <- "delta"
       row.names(fit) <- ""

@@ -247,3 +247,50 @@ fracpol <- function(x, p = c(1, 1), shift, scale, scaling = TRUE){
    attr(Xp, "scaling") <- scaling
    Xp
 }
+
+#' @noRd
+fracpol.eval <- function(x, p = c(1, 1), shift, scale, scaling = TRUE, xname = "x"){
+if (scaling){
+   if (missing(shift)){
+      shift <- 0
+      if (length(x) > 1L){
+         if (min(x) <= 0) {
+            z <- diff(sort(x))
+            shift <- min(z[z > 0]) - min(x)
+            shift <- ceiling(shift * 10)/10
+         }
+      }
+   }
+   if (missing(scale)){
+      scale <- 1
+      if (length(x) > 1L){
+         range <- mean(x + shift)
+         scale <- 10^(sign(log10(range)) * round(abs(log10(range))))
+      }
+   }
+} else {
+   shift <- 0
+   scale <- 1
+}
+scaling <- c(shift, scale)
+if (length(p) != 2L)
+   stop("fracpol computes two-order fractional polynomials")
+x <- (x + scaling[1])/scaling[2]
+stopifnot(all(x > 0))
+
+Xp <- rbind(sapply(p, function(p) x^p))
+colnames(Xp) <- c(paste(xname, "^", p, sep = ""))
+if (any(p==0)){
+   Xp[, p==0] <- log(x)
+   colnames(Xp)[p==0] <- paste("log(", xname, ")", sep = "")
+}
+if (p[1] == p[2]){
+   Xp[, 2] <- Xp[, 2]*log(x)
+   colnames(Xp)[2] <- paste("log(", xname, ")", xname, "^", p[2], sep = "")
+   if (any(p ==0))
+      colnames(Xp)[2] <- paste("log(", xname, ")^2", sep = "")
+}
+attr(Xp, "p") <- p
+attr(Xp, "scaling") <- scaling
+Xp
+}

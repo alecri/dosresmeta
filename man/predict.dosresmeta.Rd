@@ -4,8 +4,8 @@
 \alias{predict.dosresmeta}
 \title{Predicted Values from dosresmeta Models}
 \usage{
-\method{predict}{dosresmeta}(object, newdata, xref, expo = FALSE,
-  ci.incl = TRUE, se.incl = FALSE, delta, order = FALSE,
+\method{predict}{dosresmeta}(object, newdata, xref, expo = FALSE, xref_vec,
+  ci.incl = TRUE, se.incl = FALSE, xref_pos = 1, delta, order = FALSE,
   ci.level = 0.95, ...)
 }
 \arguments{
@@ -17,9 +17,13 @@
 
 \item{expo}{logical switch indicating if the prediction should be on the exponential scale.}
 
+\item{xref_vec}{an optional numeric to indicate the referent (vector) for the predicted relative risks. See details.}
+
 \item{ci.incl}{logical switch indicating if confidence intervals need to be included.}
 
 \item{se.incl}{logical switch indicating if standard errors need to be included.}
+
+\item{xref_pos}{an optional scalar to indicate the position of the referent for the predicted relative risks. See details.}
 
 \item{delta}{an optional scalar to specify to predict the linear trend related to that increase.}
 
