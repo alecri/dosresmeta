@@ -6,7 +6,7 @@
 #' @name dosresmeta-package
 #' @docType package
 #' @import mvmeta
-#' @importFrom stats AIC BIC delete.response model.frame model.matrix model.response optim pchisq pnorm qnorm symnum terms update
+#' @importFrom stats lm AIC BIC delete.response model.frame model.matrix model.response optim pchisq pnorm qnorm symnum terms update
 #' @importFrom utils head modifyList
 #'
 #' @description It consists of a collection of functions to estimate dose-response

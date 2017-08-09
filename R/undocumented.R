@@ -250,47 +250,119 @@ fracpol <- function(x, p = c(1, 1), shift, scale, scaling = TRUE){
 
 #' @noRd
 fracpol.eval <- function(x, p = c(1, 1), shift, scale, scaling = TRUE, xname = "x"){
-if (scaling){
-   if (missing(shift)){
-      shift <- 0
-      if (length(x) > 1L){
-         if (min(x) <= 0) {
-            z <- diff(sort(x))
-            shift <- min(z[z > 0]) - min(x)
-            shift <- ceiling(shift * 10)/10
+   if (scaling){
+      if (missing(shift)){
+         shift <- 0
+         if (length(x) > 1L){
+            if (min(x) <= 0) {
+               z <- diff(sort(x))
+               shift <- min(z[z > 0]) - min(x)
+               shift <- ceiling(shift * 10)/10
+            }
          }
       }
-   }
-   if (missing(scale)){
-      scale <- 1
-      if (length(x) > 1L){
-         range <- mean(x + shift)
-         scale <- 10^(sign(log10(range)) * round(abs(log10(range))))
+      if (missing(scale)){
+         scale <- 1
+         if (length(x) > 1L){
+            range <- mean(x + shift)
+            scale <- 10^(sign(log10(range)) * round(abs(log10(range))))
+         }
       }
+   } else {
+      shift <- 0
+      scale <- 1
    }
-} else {
-   shift <- 0
-   scale <- 1
+   scaling <- c(shift, scale)
+   if (length(p) != 2L)
+      stop("fracpol computes two-order fractional polynomials")
+   x <- (x + scaling[1])/scaling[2]
+   stopifnot(all(x > 0))
+   
+   Xp <- rbind(sapply(p, function(p) x^p))
+   colnames(Xp) <- c(paste(xname, "^", p, sep = ""))
+   if (any(p==0)){
+      Xp[, p==0] <- log(x)
+      colnames(Xp)[p==0] <- paste("log(", xname, ")", sep = "")
+   }
+   if (p[1] == p[2]){
+      Xp[, 2] <- Xp[, 2]*log(x)
+      colnames(Xp)[2] <- paste("log(", xname, ")", xname, "^", p[2], sep = "")
+      if (any(p ==0))
+         colnames(Xp)[2] <- paste("log(", xname, ")^2", sep = "")
+   }
+   attr(Xp, "p") <- p
+   attr(Xp, "scaling") <- scaling
+   Xp
 }
-scaling <- c(shift, scale)
-if (length(p) != 2L)
-   stop("fracpol computes two-order fractional polynomials")
-x <- (x + scaling[1])/scaling[2]
-stopifnot(all(x > 0))
 
-Xp <- rbind(sapply(p, function(p) x^p))
-colnames(Xp) <- c(paste(xname, "^", p, sep = ""))
-if (any(p==0)){
-   Xp[, p==0] <- log(x)
-   colnames(Xp)[p==0] <- paste("log(", xname, ")", sep = "")
+#' @noRd
+vpc <- function(object){
+   v <- object$v
+   id <- object$id
+   Psi <- object$Psi
+   Slist <- object$Slist
+   vlist <- lapply(unique(id), function(j) cbind(v[id == j]))
+   Z <- model.matrix(object$formula, data = object$model)[, 2:(object$dim$q+1), drop = FALSE]
+   Zlist <- lapply(unique(id), function(j)
+      Z[id == j, , drop = FALSE])
+   if (object$center){
+      Zlist <- mapply(function(Z, v){
+         scale(Z, Z[v==0, ], scale = FALSE)
+      }, Zlist, vlist, SIMPLIFY = FALSE)
+      Z <- do.call("rbind", Zlist)
+   }
+   Zlist <- lapply(Zlist, function(z) z[-1, , drop = FALSE])
+   vpclist <- mapply(function(Z, S){
+      diag(Z %*% Psi %*% t(Z))/diag(S + Z %*% Psi %*% t(Z))
+   }, Zlist, Slist, SIMPLIFY = FALSE)
+   vpc <- do.call("c", vpclist)
+   vpc
 }
-if (p[1] == p[2]){
-   Xp[, 2] <- Xp[, 2]*log(x)
-   colnames(Xp)[2] <- paste("log(", xname, ")", xname, "^", p[2], sep = "")
-   if (any(p ==0))
-      colnames(Xp)[2] <- paste("log(", xname, ")^2", sep = "")
-}
-attr(Xp, "p") <- p
-attr(Xp, "scaling") <- scaling
-Xp
+
+#' @noRd
+gof <- function(object, fixed = TRUE){
+   mf <- model.frame(object)
+   mfmX <- object$model
+   y <- as.matrix(model.response(mfmX, "numeric"))
+   id <- object$id
+   nay <- is.na(y)
+   X <- model.matrix(attr(mfmX, "terms"), data = mfmX)
+   X <- X[, -grep("(Intercept)", colnames(X)), drop = FALSE]
+   Slist <- object$Slist
+   v <- object$v
+   dim <- object$dim
+   vlist <- lapply(unique(id), function(j) cbind(v[id == j]))
+   ylist <- lapply(unique(id), function(j) 
+      y[id == j, , drop = FALSE][!nay[j, ], , drop = FALSE])
+   Xlist <- lapply(unique(id),
+                   function(j) 
+                      X[id == j, , drop = FALSE][!nay[j, ], , drop = FALSE])
+   nalist <- lapply(unique(id), function(j) nay[id == j, , drop = FALSE])
+   if (object$center){
+      Xlist <- mapply(function(X, v){
+         scale(X, X[v==0, ], scale = FALSE)
+      }, Xlist, vlist, SIMPLIFY = FALSE)
+      X <- do.call("rbind", Xlist)
+   }
+   Psi <- if (fixed == TRUE){
+      diag(0, dim$q)
+   } else {
+      object$Psi
+   }
+   Xlist <- mapply(function(X, v) X[v!=0, , drop = FALSE], 
+                   Xlist, vlist, SIMPLIFY = FALSE)
+   ylist <- mapply(function(y, v) y[v!=0, , drop = FALSE], 
+                   ylist, vlist, SIMPLIFY = FALSE)
+   nalist <- mapply(function(na, v) na[v!=0], nalist, vlist, SIMPLIFY = FALSE)   
+   gls <- glsfit(Xlist, Zlist = lapply(Xlist, function(z) z[, 1:dim$q, drop = FALSE]), 
+                              ylist, Slist, nalist, Psi, onlycoef = FALSE)
+   tdata <- data.frame(gls$invtUy, gls$invtUX)
+   names(tdata)[1] <- names(mf)[1]
+   tlm <- summary(lm(gls$invtUy ~ 0 + gls$invtUX))
+   tdata$res <- tlm$residuals
+   list(tdata = tdata, R2 = tlm$r.squared, R2adj = tlm$adj.r.squared,
+        deviance = list(D = sum(tlm$residuals^2),
+                        df = tlm$df[2],
+                        p = pchisq(sum(tlm$residuals^2), tlm$df[2], lower.tail = F))
+   )
 }
