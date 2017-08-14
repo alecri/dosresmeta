@@ -132,6 +132,41 @@ NULL
 NULL
 
 
+#' Twenty-two case-control studies on the relation between oral contraceptives use and breast cancer
+#'
+#' @name oc_breast
+#' @description The dataset reports the summarized dose-response results from twenty-two case-control 
+#' studies on the relation between oral contraceptives use and breast cancer
+#'
+#' @docType data
+#' @format A data frame with 113 observations on the following 14 variables:
+#' \tabular{ll}{
+#' \code{id} \tab id of the studies included in the analysis.\cr
+#' \code{author} \tab names of the first author.\cr
+#' \code{year} \tab year of publication.\cr
+#' \code{type} \tab code for study design.\cr
+#' \code{duration} \tab assigned dose levels.\cr
+#' \code{cases} \tab number of cases for each exposure level.\cr
+#' \code{n} \tab total number of subjects (type = "ir" or "cc") or person-years (type = "ir") for each exposure level.\cr
+#' \code{or} \tab adjusted odds ratios.\cr
+#' \code{lb} \tab lower bound for the confidence limits of the adjusted odds ratios.\cr
+#' \code{ub} \tab upper bound for the confidence limits of the adjusted odds ratios.\cr
+#' \code{logor} \tab natural logarithm of the adjusted odds ratios.\cr
+#' \code{se} \tab standard error for the logarithm of the adjusted odds ratios.\cr
+#' \code{menopause} \tab indicator variable for a study that included postmenopausal women (1 = yes).\cr
+#' \code{period} \tab final year of case accrual (surrogate for the changing formulations of oral contraceptives over time). \cr
+#' }
+#'
+#' @author Alessio Crippa, <\email{alessio.crippa@@ki.se}>
+#' 
+#' @references
+#' 
+#' Berlin JA, Longnecker MP, Greenland S. Meta-analysis of epidemiologic dose-response data. 
+#' Epidemiology. 1993 May 1:218-28. 
+#' @keywords data
+NULL
+
+
 #' Six published studies on the relation between alcohol intake and cardiovascular disease risk.
 #'
 #' @name alcohol_cvd
