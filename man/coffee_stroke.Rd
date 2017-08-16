@@ -4,7 +4,7 @@
 \name{coffee_stroke}
 \alias{coffee_stroke}
 \title{Eleven prospective studies on the relation between coffee consumption and stroke risk}
-\format{A data frame with 68 observations on the following 11 variables:
+\format{A data frame with 68 observations on the following 12 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author of the studies.\cr
@@ -17,6 +17,7 @@
 \code{ub} \tab upper bound for the confidence limits of the adjusted risk estimates.\cr
 \code{logrr} \tab natural logarithm of the adjusted risk estimates.\cr
 \code{se} \tab standard error for the logarithm of the adjusted risk estimates.\cr
+\code{nordic} \tab indicator variable for the study to be conducted in the nordic countries (1 = yes).\cr
 }}
 \description{
 The dataset reports the summarized dose-response results from eleven prospective studies on the relation between coffee consumption
