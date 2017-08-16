@@ -32,7 +32,7 @@ glsfit <- function(Xlist, Zlist, ylist, Slist, nalist, Psi, onlycoef = TRUE){
    if (onlycoef) 
       return(coef)
    list(coef = coef, Sigmalist = Sigmalist, Ulist = Ulist, invUlist = invUlist, 
-        invtUXlist = invtUXlist, invtUX = invtUX, invtUy = invtUy)
+        invtUXlist = invtUXlist, invtUylist = invtUylist, invtUX = invtUX, invtUy = invtUy)
 }
 
 #' @noRd
@@ -317,52 +317,4 @@ vpc <- function(object){
    }, Zlist, Slist, SIMPLIFY = FALSE)
    vpc <- do.call("c", vpclist)
    vpc
-}
-
-#' @noRd
-gof <- function(object, fixed = TRUE){
-   mf <- model.frame(object)
-   mfmX <- object$model
-   y <- as.matrix(model.response(mfmX, "numeric"))
-   id <- object$id
-   nay <- is.na(y)
-   X <- model.matrix(attr(mfmX, "terms"), data = mfmX)
-   X <- X[, -grep("(Intercept)", colnames(X)), drop = FALSE]
-   Slist <- object$Slist
-   v <- object$v
-   dim <- object$dim
-   vlist <- lapply(unique(id), function(j) cbind(v[id == j]))
-   ylist <- lapply(unique(id), function(j) 
-      y[id == j, , drop = FALSE][!nay[j, ], , drop = FALSE])
-   Xlist <- lapply(unique(id),
-                   function(j) 
-                      X[id == j, , drop = FALSE][!nay[j, ], , drop = FALSE])
-   nalist <- lapply(unique(id), function(j) nay[id == j, , drop = FALSE])
-   if (object$center){
-      Xlist <- mapply(function(X, v){
-         scale(X, X[v==0, ], scale = FALSE)
-      }, Xlist, vlist, SIMPLIFY = FALSE)
-      X <- do.call("rbind", Xlist)
-   }
-   Psi <- if (fixed == TRUE){
-      diag(0, dim$q)
-   } else {
-      object$Psi
-   }
-   Xlist <- mapply(function(X, v) X[v!=0, , drop = FALSE], 
-                   Xlist, vlist, SIMPLIFY = FALSE)
-   ylist <- mapply(function(y, v) y[v!=0, , drop = FALSE], 
-                   ylist, vlist, SIMPLIFY = FALSE)
-   nalist <- mapply(function(na, v) na[v!=0], nalist, vlist, SIMPLIFY = FALSE)   
-   gls <- glsfit(Xlist, Zlist = lapply(Xlist, function(z) z[, 1:dim$q, drop = FALSE]), 
-                              ylist, Slist, nalist, Psi, onlycoef = FALSE)
-   tdata <- data.frame(gls$invtUy, gls$invtUX)
-   names(tdata)[1] <- names(mf)[1]
-   tlm <- summary(lm(gls$invtUy ~ 0 + gls$invtUX))
-   tdata$res <- tlm$residuals
-   list(tdata = tdata, R2 = tlm$r.squared, R2adj = tlm$adj.r.squared,
-        deviance = list(D = sum(tlm$residuals^2),
-                        df = tlm$df[2],
-                        p = pchisq(sum(tlm$residuals^2), tlm$df[2], lower.tail = F))
-   )
 }
