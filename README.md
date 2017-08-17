@@ -42,5 +42,13 @@ An updated version of the code can be found at the GitHub (https://github.com/al
 
 ### References:
 
+Crippa A, Orsini N. Multivariate Dose-Response Meta-Analysis: the dosresmeta R Package. 
+*Journal of Statistical Software*, Code Snippets,. 2016; 72(1), 1-15. doi:10.18637/jss.v072.c01. [freely available [here](https://alecri.github.io/downloads/jss1256.pdf)]
+
+Crippa A, Orsini N. Dose-response meta-analysis of differences in means. *BMC Medical Research Methodology*. 2016 Aug 2;16(1):91. [freely available [here](https://www.researchgate.net/publication/305804878_Dose-response_meta-analysis_of_differences_in_means)] [GitHub repository at this [link](https://github.com/alecri/differences-in-mean)]
+
+Discacciati A, Crippa A, Orsini N. Goodness of fit tools for dose-response meta-analysis of binary outcomes. *Research Synthesis Methods*. 2015 Jan 1. doi: 10.1002/jrsm.1194. [freely available [here](http://onlinelibrary.wiley.com/doi/10.1002/jrsm.1194/pdf)] [GitHub repository at this [link](https://github.com/anddis/goodness-of-fit-meta-analysis)]
+
+
 
 
