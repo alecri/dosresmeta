@@ -614,3 +614,35 @@ NULL
 #'  
 #' @keywords data
 NULL
+
+
+#' Simulated data for one-stage dose-response meta-analysis
+#'
+#' @name sim_os
+#' @description The dataset contains simulated data from 9 case-control studies.
+#'
+#' @docType data
+#' @format A data frame with 27 observations on the following 11 variables:
+#' \tabular{ll}{
+#' \code{xcati} \tab category limits for the continuous exposure.\cr
+#' \code{id} \tab id of the studies.\cr
+#' \code{type} \tab code for study design.\cr
+#' \code{dose} \tab assigned dose levels.\cr
+#' \code{cases} \tab number of cases for each exposure level.\cr
+#' \code{n} \tab total number of subjects for each exposure level.\cr
+#' \code{rr} \tab adjusted risk estimates for each exposure level.\cr
+#' \code{lrr} \tab lower bound for the confidence limits of the adjusted risk estimates.\cr
+#' \code{urr} \tab upper bound for the confidence limits of the adjusted risk estimates.\cr
+#' \code{logrr} \tab natural logarithm of the adjusted risk estimates.\cr
+#' \code{se} \tab standard error for the logarithm of the adjusted risk estimates.\cr
+#' }
+#'
+#' @author Alessio Crippa, <\email{alessio.crippa@@ki.se}>
+#' 
+#' @references
+#' 
+#' Larsson, S. C., Orsini, N. (2011). Coffee consumption and risk of stroke: a dose-response 
+#' meta-analysis of prospective studies. American journal of epidemiology, 174(9), 993-1001.
+#' 
+#' @keywords data
+NULL
