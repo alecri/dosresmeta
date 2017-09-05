@@ -349,3 +349,40 @@ vpc <- function(object){
    vpc
 }
 
+
+#' Grid with combinations of p for two-order fractional polynomials
+#' 
+#' @name fpgrid
+#' 
+#' @description Computes the different combinations of p usefull for evaluating two-order fractional polynomials.
+#' 
+#' @param p a numeric vector with the coefficient to be combined.
+#' 
+#' @return A data.frame with the different combinations of p.
+#' 
+#' @examples
+#' 
+#' grd <- fpgrid()
+#' head(grd)
+#' 
+#' @author Alessio Crippa, \email{alessio.crippa@@ki.se}
+#' 
+#' @references 
+#' 
+#' Royston, Patrick, and Douglas G. Altman. "Regression using fractional polynomials of 
+#' continuous covariates: parsimonious parametric modelling." Applied Statistics (1994): 429-467.
+#' 
+#' @export fpgrid
+
+fpgrid <- function(p = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3)){
+   if (length(p) < 2L){
+      stop("p must contain at least 2 values")
+   }
+   p1 <- p
+   p2 <- p   
+   grid <- subset(expand.grid(p1 = p1, p2 = p2), p1 <= p2)
+   grid <- grid[order(grid[, 1]), ]
+   rownames(grid) <- seq(nrow(grid))
+   grid
+}
+

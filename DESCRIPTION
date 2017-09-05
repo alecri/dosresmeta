@@ -1,8 +1,8 @@
 Package: dosresmeta
 Type: Package
 Title: Performing Multivariate Dose-Response Meta-Analysis
-Version: 2.0.0
-Date: 2016-06-08
+Version: 2.0.1
+Date: 2017-09-04
 Author: Alessio Crippa
 Maintainer: Alessio Crippa <alessio.crippa@ki.se>
 Description: It consists of a collection of
@@ -13,3 +13,6 @@ License: GPL-2
 Depends:
     mvmeta
 RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown, rms
+VignetteBuilder: knitr

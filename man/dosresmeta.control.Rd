@@ -4,7 +4,7 @@
 \alias{dosresmeta.control}
 \title{Ancillary Parameters for Controlling the Fit in dosresmeta Models}
 \usage{
-dosresmeta.control(optim = list(), showiter = FALSE, maxiter = 100,
+dosresmeta.control(optim = list(), showiter = FALSE, maxiter = 1000,
   initPsi = NULL, igls.iter = 10, gr = FALSE,
   reltol = sqrt(.Machine$double.eps),
   set.negeigen = sqrt(.Machine$double.eps))

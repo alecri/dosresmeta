@@ -1,5 +1,5 @@
 .onAttach <- function(libname, pkgname) {
-   packageStartupMessage("This is dosresmeta 2.0.0. For an overview type: help('dosresmeta-package').")
+   packageStartupMessage("This is dosresmeta 2.1.0. For an overview type: help('dosresmeta-package').")
 }
 
 #' Performing multivariate dose-response meta-analysis

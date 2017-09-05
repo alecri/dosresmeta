@@ -1,0 +1,427 @@
+% Defining options for chunck editing and loading required R packages
+<<GlobalOption, echo=FALSE>>=
+knitr::opts_chunk$set(prompt = TRUE, results = "markdown", comment = NA,  fig.width = 5, fig.height = 5, highlight = T, background = "white")
+## jss style requirements
+options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
+@
+
+\documentclass[nojss]{jss}
+\usepackage{amsmath}
+\usepackage{epstopdf}
+\usepackage{graphicx}
+
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{dosresmeta} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% declarations for jss.cls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% almost as usual
+\author{Alessio Crippa\\Karolinska Institutet \And 
+       Nicola Orsini\\Karolinska Institutet}
+\title{Multivariate Dose-Response Meta-Analysis:\\ the \pkg{dosresmeta} \proglang{R} Package}
+
+%% for pretty printing and a nice hypersummary also set:
+\Plainauthor{Alessio Crippa, Nicola Orsini} %% comma-separated
+\Plaintitle{Multivariate Dose-Response Meta-Analysis: the dosresmeta R Package} %% without formatting
+\Shorttitle{Multivariate Dose-Response Meta-Analysis} %% a short title (if necessary)
+
+%% an abstract and keywords
+\Abstract{
+An increasing number of quantitative reviews of epidemiological data includes a dose-response analysis. 
+Although user-written procedures have been implemented and widely used in common commercial statistical software (\proglang{Stata}, \proglang{SAS}), no package was available for the free software \proglang{R}.
+Aims of this paper are to describe the main aspects (covariances of correlated outcomes, pooling of study-specific trends, flexible modelling of the exposure, testing hypothesis, statistical heterogeneity, graphical presentation of the pool dose-response trend) of the methodology and to illustrate the novel package \pkg{dosresmeta} for performing multivariate dose-response meta-analysis.
+}
+\Keywords{dose-response, meta-analysis, mixed-effects model,  \pkg{dosresmeta}, \proglang{R}}
+\Plainkeywords{dose-response, meta-analysis, mixed-effects model, dosresmeta, R-package} %% without formatting
+%% at least one keyword must be supplied
+
+%% publication information
+%% NOTE: Typically, this can be left commented and will be filled out by the technical editor
+%% \Volume{50}
+%% \Issue{9}
+%% \Month{June}
+%% \Year{2012}
+%% \Submitdate{2012-06-04}
+%% \Acceptdate{2012-06-04}
+
+%% The address of (at least) one author should be given
+%% in the following format:
+\Address{
+  Alessio Crippa\\
+  Unit of Nutritional Epidemiology\\
+  Unit of Biostatistics\\ 
+  Institute of Environmental Medicine, Karolinska Institutet\\
+  P.O. Box 210, SE-171 77, Stockholm, Sweden \\
+  E-mail: \email{alessio.crippa@ki.se}\\
+  URL: \url{http://www.imm.ki.se/biostatistics}
+}
+%% It is also possible to add a telephone and fax number
+%% before the e-mail in the following format:
+%% Telephone: +43/512/507-7103
+%% Fax: +43/512/507-2851
+
+%% for those who use Sweave please include the following line (with % symbols):
+%% need no \usepackage{Sweave.sty}
+
+%% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document} 
+
+\section{Introduction}
+
+Epidemiological studies often assess whether the observed relationship between increasing (or decreasing) levels of exposure and the risk of diseases follows a certain dose-response pattern (U-shaped, J-shaped, linear). Quantitative exposures in predicting health events are frequently categorized and modeled with indicator or dummy variables using one exposure level as referent \citep{turner2010categorisation}. Using a categorical approach no specific trend is assumed and data as well as results are typically presented in a tabular form. The purpose of a meta-analysis of summarised dose-response data is to describe the overall functional relation and identify exposure intervals associated with higher or lower disease risk.
+
+A method for dose-response meta-analysis was first described in a seminal paper by \cite{greenland1992methods} and since then it has been cited about 574 times (citation data available from Web of Science). Methodological articles next investigated how to model non linear dose-response associations \citep{orsini2012meta, bagnardi2004flexible, liu2009two, rota2010random}, how to deal with covariances of correlated outcomes \citep{hamling2008facilitating, berrington2003generalized}, how to assess publication bias \citep{shi2004meta}, and how to assign a typical dose to an exposure interval \citep{takahashi2010assignment}. 
+
+The number of published dose-response meta-analyses increased about 20 times over the last decade, from 6 papers in 2002 to 121 papers in 2013 (number of citations of the paper by \cite{greenland1992methods} obtained from Web of Science). The increase of publications has been greatly facilitated by the release of user-written procedures for commonly used commercial statistical software;  namely the \code{glst} command \citep{orsini2006generalized} developed for \proglang{Stata} and the \code{metadose} macro \citep{li2010sas} developed for \proglang{SAS}. No procedure, however, was available in the free software programming language \proglang{R}. 
+
+Aims of the current paper are to describe the main aspects (covariances of correlated outcomes, pooling of study-specific trends, flexible modelling of the exposure, testing hypothesis, statistical heterogeneity, predictions, and graphical presentation of the pool dose-response trend) of the methodology and to illustrate the use of the novel \proglang{R} package \pkg{dosresmeta} for performing dose-response meta-analysis. Other factors to be considered when conducting quantitative reviews of dose-response data are selection of studies, exposure measurement error, and potential confounding arising in observational studies.   
+
+The paper is organized as follows: section 2 introduces the method for trend estimation for single and multiple studies; section 3 describes how to use the \pkg{dosresmeta} package; section 4 provides some worked examples; and section 5 contains final comments.
+
+\section{Methods}
+
+The data required from each study included in a dose-response meta-analysis are displayed in Table \ref{tab:data}. Dose values, $x$, are assigned in place of the $n$ exposure intervals. The assigned dose is typically the median or midpoint value.  Depending on the study design, dose-specific odds ratios, rate ratios, or risk ratios (from now on generally referred to as relative risks (RR)) eventually adjusted for potential confounders are reported together with the corresponding 95\% confidence intervals $\left( \underline{RR}, \overline{RR} \right)$ using a common reference category $x_0$. Additionally, information about the number of cases and total number of subjects or person-time within each exposure category is needed.
+
+We now describe the two stage procedure to estimate a pooled exposure-disease curve from such summarized dose-response data.
+
+\subsection{First stage: trend estimation for a single study}
+In the first stage of the analysis the aim is to estimate the dose-response association between the adjusted log relative risks and the levels of a specific exposure in a particular study.
+
+\begin{table}
+\caption{Summarized dose-response data required for a dose-response meta-analysis.} \label{tab:data}
+\begin{center}
+    \begin{tabular}{ccccc}
+  \hline
+	dose & cases & n & $\mathrm{RR}$ & 95\% CI \\
+	\hline
+	$x_0$ & $c_0$ & $n_0$ & $1$ & --- \\
+	\vdots & \vdots & \vdots & \vdots & \vdots \\
+	$x_n$ & $c_n$ & $n_n$ & $\mathrm{RR}_{n}$ & $\underline{\mathrm{RR}}_n$, $\overline{\mathrm{RR}}_n$ \\
+\hline
+    \end{tabular}
+\end{center}
+\end{table}
+
+\subsubsection*{Model definition}
+
+The model consists of a log-linear model where the dependent variable is the logarithm of the relative risks (logRR) as function of the dose
+\begin{equation}
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \boldsymbol{\epsilon}
+\label{eq:logmodel}
+\end{equation}
+where $\mathbf{y}$ is an $n \times 1$ vector of adjusted log relative risks (not including the reference one) and $\mathbf{X}$ is a $n \times p$ matrix containing the non-referent values of the dose and/or some transforms of it (e.g., splines, polynomials).
+\begin{equation}
+ \mathbf{X}=\left[
+\begin{array}{ccc}
+g_{1}(x_{1j}) - g_{1}(x_{0j}) & \hdots & g_{p}(x_{pj}) - g_{p}(x_{0j}) \\
+\vdots &  & \vdots \\
+g_{1}(x_{n_jj}) -  g_{1}(x_{0j}) & \hdots & g_{p}(x_{n_jj}) -  g_{p}(x_{0j}) \\
+\end{array}%
+\right] 
+\label{eq:des.matrix}
+\end{equation}
+Of note, the design matrix $\mathbf{X}$ has no intercept because the log relative risk is equal to zero for the reference exposure value $x_0$.
+A linear trend ($p = 1$) implies that $g_{1}$ is the identity function. A quadratic trend ($p=2$) implies that $g_{1}$ is the identity function and $g_{2}$ is the squared function. The $\mathbf{\beta}$ is a $p \times 1$ vector of unknown regression coefficients defining the pooled dose-response association.
+
+\subsubsection*{Approximating covariances}
+A particular feature of dose-response data is that the error terms in $\epsilon$ are not independent because are constructed using a common reference (unexposed) group. It has been shown that assuming zero covariance or correlation leads to biased estimates of the trend \citep{greenland1992methods, orsini2012meta}.
+
+The variance-covariance matrix $\COV(\boldsymbol{\epsilon})$ is equal to the following symmetric matrix 
+
+\begin{equation*}
+\COV(\boldsymbol{\epsilon}) = \mathbf{S} = \left[
+\begin{array}{ccccc}
+\sigma_{1}^2 & \ \ & \ & & \ \\
+\ \vdots \ & \ddots & & & \ \\
+\sigma_{i1}& \ & \sigma_{i}^2 & & \ \\
+\vdots & \ & \ & \ddots & \\
+\sigma_{n1} & \ldots & \sigma_{ni} & \ldots & \sigma_{n}^2%
+\end{array}
+\right] \ \label{eq:C}.
+\end{equation*}
+
+where the covariance among (log) relative risks implies the non-diagonal elements of $\mathbf{S}$ are unlikely equal to zero. Briefly, \cite{greenland1992methods} approximate the covariances by defining a table of pseudo or effective counts corresponding to the multivariable adjusted log relative risks. A unique solution is guaranteed by keeping the margins of the table of pseudo-counts equal to the margins of the crude or unadjusted data. 
+ 
+More recently \cite{hamling2008facilitating} developed an alternative method to approximate the covariances by defining a table of effective counts corresponding to the multivariable adjusted log relative risks as well as their standard errors. A unique solution is guaranteed by keeping the ratio of non-cases to cases and the fraction of unexposed subjects equal to the unadjusted data. An evaluation of those approximations can be found in \cite{orsini2012meta}.
+
+There is no need of such methods, however, when the average covariance is directly published using the floating absolute risk method \citep{easton1991floating} or the estimated variance/covariance matrix is provided directly by the principal investigator in pooling projects or pooling of standardized analyses. 
+
+\subsubsection*{Estimation}
+
+The approximated covariance can be then used to efficiently estimate the vector of regression coefficients $\boldsymbol{\beta}$ of the model in Equation~\ref{eq:logmodel} using generalized least squares method. The method involves minimizing $( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} )^\top \boldsymbol{\Sigma}^{-1} ( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} )$ with respect to $\boldsymbol{\beta}$. The vector of estimates $\boldsymbol{\hat \beta}$ and the estimated covariance matrix $\mathbf{\hat V}$ are obtained as:
+\begin{equation}
+\begin{gathered}
+\boldsymbol{\hat \beta} = ( \mathbf{X}^\top  \mathbf{S}^{-1} \mathbf{X} )^{-1} \mathbf{X}^\top  \mathbf{S}^{-1} \mathbf{y} \\ 
+\mathbf{\hat V}= ( \mathbf{X}^\top  \mathbf{S}^{-1} \mathbf{X})^{-1}
+\end{gathered}
+\label{eq:gls}
+\end{equation}
+
+
+\subsection{Second stage: trend estimation for multiple studies}
+
+The aim of the second stage analysis is to combine study-specific estimates using established methods for multivariate meta-analysis \citep{van2002advanced, white2009multivariate, jackson2010extending, mvmeta, jackson2013matrix}.
+
+\subsubsection*{Model definition}
+
+Let us indicate each study included in the meta-analysis with the index $j = 1 ,\dots , m$. The first stage provides $p$-length vector of parameters $\boldsymbol{\hat \beta}_j$ and the accompanying $p \times p$ estimated covariance matrix $\mathbf{\hat V}_j$. 
+The coefficients $\boldsymbol{\hat \beta}_j$ obtained in the first stage analysis are now used as outcome in a multivariate meta-analysis
+\begin{equation}
+\boldsymbol{\hat {\beta}}_j \sim N_p (\boldsymbol{\beta}, \mathbf{\hat V}_j+ \boldsymbol{\psi})
+\label{eq:metamodel}
+\end{equation}
+where $ \mathbf{\hat V}_j+\boldsymbol{\psi} = \boldsymbol{\Sigma}_j$. The marginal model defined in Equation~\ref{eq:metamodel} has independent within-study and between-study components. In the within-study component, the estimated $\boldsymbol{\hat{\beta}}_j$ is assumed to be sampled with error from $N_p(\boldsymbol{\beta}_j,\mathbf{\hat V}_j)$, a multivariate normal distribution of dimension $p$, where $\boldsymbol{\beta}_j$ is the vector of true unknown outcome parameters for study $j$. In the between-study component, $\boldsymbol{\beta}_j$ is assumed sampled from $N_p (\boldsymbol{\beta} , \boldsymbol{\psi})$, where $\boldsymbol{\psi}$ is the unknown between-study covariance matrix. Here $\boldsymbol{\beta}$ can be interpreted as the population-average outcome parameters, namely the coefficients defining the pooled dose-response trend.
+The \pkg{dosresmeta} package refers to the \pkg{mvmeta} package for the second-stage analysis \citep{mvmeta}. 
+Different methods are available to estimate the parameters: fixed effects ($\boldsymbol{\psi}$ sets to $\boldsymbol{0}$), maximum likelihood, restricted maximum likelihood, and methods of moments. 
+
+\subsubsection*{Hypothesis testing and heterogeneity}
+
+There are two questions of interest in a dose-response meta-analysis: is there an association between the quantitative exposure and the relative risk of disease? Is there significant statistical heterogeneity across the study-specific trends?
+
+The overall exposure-disease curve is specified by the vector of coefficients $\boldsymbol{\beta}$. Thus the first question can be addressed by testing $H_{0}:\boldsymbol{\beta}=\boldsymbol{0}$. If we reject $H_{0}$ we may be interested in evaluating any possible departure from a log-linear model. This can be done by testing $H_{0}^*: \boldsymbol{\beta^*}=\boldsymbol{0}$, where $\boldsymbol{\beta^*}$ refers to the vector of coefficients defining non-linearity (e.g. quadratic term, spline transformations). Wald-type confidence intervals and tests of hypothesis for $\boldsymbol{\beta}$ and  $\boldsymbol{\beta^*}$ can be based on $\boldsymbol{\hat \beta}$ and its covariance matrix \citep{harville1977maximum}. 
+
+Variation of dose-response trends across studies, instead, is captured by the variance components included in $\boldsymbol{\psi}$.
+The hypothesis of no statistical heterogeneity, $H_{0}:\boldsymbol{\psi} = \boldsymbol{0}$, can be tested by adopting the multivariate extension of the Cochran  $Q$-test \citep{berkey1996multiple}. 
+The test is defined as
+\begin{equation}
+Q = \sum_{j=1}^m \left[ \left( \boldsymbol{\hat \beta}_j - \boldsymbol{\hat \beta} \right) ^\top \mathbf{\hat V}_j^{-1} \left( \boldsymbol{ \hat \beta}_j - \boldsymbol{\hat \beta} \right) \right]
+\label{eq:Qtest}
+\end{equation}
+where $\boldsymbol{\hat \beta}$ is the vector of regression coefficients estimated assuming $\boldsymbol{\psi} = \boldsymbol{0}$. Under the null hypothesis of no statistical heterogeneity among studies the $Q$~statistic follow a $\chi_{m-p}^2$ distribution. It has been shown, however, that the test is likely not to detect heterogeneity in meta-analyses of small number of studies, and conversely can lead to significant results even for negligible discrepancies in case of many studies \citep{higgins2002quantifying}.
+
+A measure of heterogeneity $I^2= max \left \{ 0 ,  ( Q - df ) / Q \right \}$ can be derived from the $Q$~statistic and its degrees of freedom $(df = m-p)$  \citep{higgins2002quantifying}. Its use, along with the $Q$, has been recommended because it describes the impact rather than the extent of heterogeneity.
+
+
+\subsubsection*{Prediction}
+\label{subsec:pred}
+Obtaining predictions is an important step to present the results of a dose-response meta-analysis in either a tabular or graphical form. 
+The prediction of interest in a dose-response analysis is the relative risk for the disease comparing two exposure values. 
+Given a range of exposure $x$ and a chosen reference value $x_{\textrm{ref}}$, the predicted pooled dose-response association can be obtained as follows
+\begin{equation}
+\begin{gathered}
+\widehat{\mathrm{RR}}_{\mathrm{ref}}= \exp \left \{ (\mathbf{X} -  \mathbf{X}_{\mathrm{ref}}) \boldsymbol{\hat \beta} \right \}
+\end{gathered}
+\label{eq:prediction}
+\end{equation}
+where $ \mathbf{X}$ and $ \mathbf{X}_{\mathrm{ref}}$ are the design matrices evaluated, respectively, in $x$ and $x_{\mathrm{ref}}$.
+
+A $\left (1-\alpha/2 \right) \%$ confidence interval for the predict pooled dose-response curve is given by
+\begin{equation}
+\exp \left \{ \log(\widehat{\mathrm{RR}}_{\mathrm{ref}}) \mp z_{\alpha / 2} \mathrm{diag} \left( (\mathbf{X} -  \mathbf{X}_{\mathrm{ref}})  \mathbf{\hat V( \boldsymbol{\hat \beta})}  (\mathbf{X} -  \mathbf{X}_{\mathrm{ref}}) ^\top) \right)^{1/2} \right\}
+\label{eq:ci.pred}
+\end{equation} 
+
+where $\mathbf{\hat V( \boldsymbol{\hat \beta})}$ is the estimated covariance matrix of $\boldsymbol{\hat \beta}$.
+Of note, by construction the confidence intervals limits for the pooled relative risks are equal to 1 for the reference exposure $x_{\textrm{ref}}$.
+
+
+\section{The dosresmeta package}
+
+The \pkg{dosresmeta} package performs multivariate dose-response meta-analysis. The package is available via at \url{http://CRAN.R-project.org/package=dosresmeta} and can be installed directly within \proglang{R} by typing \code{install.packages("dosresmeta")}.
+
+The function \code{dosresmeta} estimates a dose-response model for either a single or multiple studies. 
+We now describe the different arguments of the function.
+
+<<usage, eval=FALSE, prompt = FALSE, tidy=FALSE>>=
+dosresmeta(formula, id, type, v, cases, n, data, intercept = F, center = T,
+  se, lb, ub, covariance = "gl", method = "reml", fcov, ucov,
+  alpha = 0.05, ...)
+@
+
+The argument \code{formula} defines the relation between the outcome and the dose.
+
+The argument \code{id} requires an identification variable for the study while the argument \code{type} specifies the study-specific design. The codes for the study design are \code{"cc"} (case-control data), \code{"ir"} (incidence-rate data), and \code{"ci"} (cumulative incidence data).
+
+The argument \code{v} requires the variances of the log relative risks. Alternatively one can provide the corresponding standard errors in the \code{se} argument, or specify the confidence interval for the relative risks in the \code{lb} and \code{ub} arguments.
+
+The arguments \code{cases} and \code{n} requires the variables needed to approximate the covariance matrix of the log relative risks: number of cases and total number of subject for each exposure level. For incidence-rate data \code{n} requires the amount of Person-Time for each exposure level.
+
+The argument \code{data} specifies the name of the data set containing the variables in the previous arguments.
+
+The logical argument \code{intercept}, \code{FALSE} by default, indicates if an intercept term needs to be included in the model. As mentioned earlier the model in Equation~\ref{eq:logmodel} typically does not contain the constant term. The logical argument \code{center}, \code{TRUE} by default, specifies if the design matrix of the model should be constructed as defined in Equation~\ref{eq:des.matrix}.
+
+The \code{method} is a string that specifies the estimation method: \code{"fixed"} for fixed-effects models, \code{"ml"} or \code{"reml"} for random-effects models fitted through maximum likelihood or restricted maximum likelihood (default), and \code{"mm"} for random-effects models fitted through method of moments. 
+
+The argument \code{covariance}, instead, is a string specifying how to approximate the covariance matrix for the log relative risks: \code{"gl"} for Greenland and Longnecker method  (default), \code{"h"} for Hamling method, \code{"fl"} for floating absolute risks, \code{"independent"} for assuming independence, and \code{"user"} if the covariance matrices are provided by the user.
+
+The output of the \code{dosresmeta} function is an object of class ``\code{dosresmeta}''. The corresponding \code{print} and \code{summary} methods can be used to display and inspect the elements of the object. 
+The \code{predict} method allows the user to obtain predictions as described in Section \ref{subsec:pred}. The predictions can be expressed on the RR scale by specifying the optional argument \code{expo} equal to \code{TRUE}. The increase in the log RR associated to a $d$ unit increase in the exposure can be obtained with the optional argument \code{delta = d}.
+
+
+\section{Examples}
+
+\subsection*{Single study}
+
+Consider the case-control study used by \cite{greenland1992methods} on alcohol consumption (grams/day) and breast cancer risk. The data \code{cc_ex} is included in the \code{dosresmeta} package.
+
+<<loading, include = F>>=
+library("dosresmeta")
+@
+<<singlestudy>>=
+library("dosresmeta")
+data("cc_ex")
+print(cc_ex, row.names = F, digits = 2)
+@
+
+Assuming a log-linear dose-response association between alcohol consumption and breast cancer risk, we estimate the model using the following code
+<<mod.cc, tidy = FALSE>>=
+mod.cc <- dosresmeta ( formula = logrr ~ dose, type = "cc", cases = case,
+             n = n, lb = lb, ub = ub, data = cc_ex)
+summary(mod.cc)
+@
+
+The change in the log relative risk of breast cancer corresponding to 1 gram/day increase in alcohol consumption was \Sexpr{round(coef(mod.cc), 4)}. On the exponential scale, every 1 gram/day increase of alcohol consumption was associated with a \Sexpr{round(100*(exp(coef(mod.cc)) - 1), 1)} \% ($\exp(\Sexpr{round(coef(mod.cc), 4)})= \Sexpr{round(exp(coef(mod.cc)), 3)}$) higher breast cancer risk.
+The \code{predict} function allows the user to express the log-linear trend for any different amount. For example, by setting \code{delta = 11}
+
+<<predict.cc, echo=TRUE>>=
+predict(mod.cc, delta = 11, exp = TRUE)
+@
+<<saved.predict.cc, echo=FALSE>>=
+delta <- 11
+pred.mod.cc <- round(100* (predict(mod.cc, exp = T, delta = 11) - 1), 0)[-1]
+@
+
+
+Every \Sexpr{delta} grams/day increment in alcohol consumption was associated with a significant \Sexpr{pred.mod.cc[1]}\% (95\% CI = \Sexpr{pred.mod.cc[2]/100+1} , \Sexpr{pred.mod.cc[3]/100+1}) higher breast cancer risk. 
+
+
+\subsection*{Multiple studies}
+
+We now perform a dose-response meta-analysis of 8 prospective cohort studies participating in the Pooling Project of Prospective Studies of Diet and Cancer used by \cite{orsini2012meta}. There are 6 exposure intervals (from 0 grams/day to 45 grams/day) for each study. A total of 3,646 cases and 2,511,424 person-years were included in the dose-response analysis. All relative risks were adjusted for smoking status, smoking duration for past and current smokers (years), number of cigarettes smoked daily for current smokers, educational level, body mass index, and energy intake (kcal/day).
+
+The data \code{ex_alcohol_crc} is included in the \code{dosresmeta} package. Below is a snapshot of the data set for the first two studies. 
+
+<<multiplestudies>>=
+data("alcohol_crc")
+print(alcohol_crc[1:12 ,], row.names = F, digits = 2)
+@
+
+First we assume a log-linear relation between alcohol consumption and colorectal cancer risk using a random-effect model.
+The estimation is carried out by running the following line
+
+<<lin, tidy = FALSE>>=
+lin <- dosresmeta(formula = logrr ~ dose, id = id, type = type, se = se,
+                   cases = cases, n = peryears, data = alcohol_crc)
+summary(lin)
+@
+
+We found a significant log-linear dose-response association between alcohol consumption and colorectal cancer risk ($p < 0.001$) and no evidence of heterogeneity across studies ($Q$ = \Sexpr{round(summary(lin)$qstat$Q[1], 2)}, $p$~value = \Sexpr{round(summary(lin)$qstat$pvalue[1], 4)}).
+
+The change in colorectal cancer risk associated with every 12 grams/day (standard drink) can be obtained with the \code{predict} function.
+
+<<pred.lin, echo = TRUE>>=
+predict(lin, delta = 12, exp = TRUE)
+@
+<<save.pred.lin, echo = FALSE>>=
+delta <- 12
+pred.lin <- 100 * (predict(lin, delta = 12, exp = TRUE) - 1)
+@
+
+Every \Sexpr{delta} grams/day increase in alcohol consumption was associated with a significant $\Sexpr{round(pred.lin[2], 1)}\%$ (95\% CI = \Sexpr{round(pred.lin[3], 1)}, \Sexpr{round(pred.lin[4], 1)}) increased risk of colorectal cancer. 
+
+The log-linear assumption between alcohol consumption and colorectal cancer risk can be relaxed by using regression splines.
+A possibility is to use restricted cubic spline model as described by \cite{orsini2012meta}: 4 knots at the 5th, 35th, 65th and 95th percentiles of the aggregated exposure distribution. The \pkg{rms} package \citep{rms} provides three ($4 - 1$) variables (the initial exposure and two splines transformations) to be included in the dose-response model. Statistical heterogeneity across studies can be taken into account by using a random-effects approach.
+
+<<loading.rms, include = FALSE>>=
+library("rms")
+@
+<<spl, tidy = FALSE>>=
+library("rms")
+knots <- quantile(alcohol_crc$dose, c(.05, .35, .65, .95))
+spl <- dosresmeta(formula = logrr ~ rcs(dose, knots), type = type, id = id,
+                  se = se, cases = cases, n = peryears,  data = alcohol_crc)
+summary(spl)
+@
+
+The risk of colorectal cancer is significantly varying according to alcohol consumption.
+We reject the null hypothesis of overall no association (all three regression coefficients simultaneously equal to zero) between alcohol consumption and colorectal cancer risk ($\chi^{2}$ = \Sexpr{round(summary(spl)$Wald.test[[1]], 2)}, $p$ < 0.001). The simpler log-linear dose-response model can be obtained from the restricted cubic spline model by constraining the regression coefficients for the second and the third spline, \code{rcs(dose, knots).dose'} and \code{rcs(dose, knots).dose"}, equal to zero. Therefore, a Wald-type test for the hypothesis of deviation from log-linearity can be carried out as follows
+
+<<chisq, echo=TRUE>>=
+waldtest(b = coef(spl), Sigma = vcov(spl), Terms = 2:3)
+@
+<<save.chisq, echo=FALSE>>=
+wt <- waldtest(b = coef(spl), Sigma = vcov(spl), Terms = 2:3)
+@
+
+The marginally significant $p$~value ($\chi^{2}$ = \Sexpr{round(wt$chitest[[1]], 1)}, $p$ = \Sexpr{round(wt$chitest[[3]], 3)}) suggested that the risk of colorectal cancer may not vary in a log-linear fashion with alcohol consumption. We presented the predicted relative risks arising from the log-linear and restricted cubic spline models (Figure~\ref{fig:curve1}) using 0 grams/day as referent ($x_{\textrm{ref}} = 0$).
+
+<<curve1, tidy = FALSE, fig.keep = 'none'>>=
+newdata <- data.frame(dose <- seq(0, 60, 1))
+xref <- 0
+with(predict(spl, newdata, xref, exp = TRUE),{
+  plot(get("rcs(dose, knots)dose"), pred, type = "l", ylim = c(.8, 1.8),
+       ylab = "Relative risk", xlab = "Alcohol consumption, grams/day", 
+       log = "y", bty = "l", las = 1)
+  matlines(get("rcs(dose, knots)dose"), cbind(ci.ub, ci.lb), 
+           col = 1, lty = "dashed")
+})
+points(dose, predict(lin, newdata, xref)$pred, type = "l", lty = 3)
+rug(alcohol_crc$dose)
+@
+
+\begin{figure}[!htb]
+\centering
+<<curve1plot, echo=FALSE>>=
+<<curve1>>
+@
+\caption{Pooled dose-response association between alcohol consumption and colorectal cancer risk (solid line). Alcohol consumption was modeled with restricted cubic splines in a multivariate random-effects dose-response model. Dash lines represent the 95\% confidence intervals for the spline model. The dotted line represents the linear trend. Tick marks below the curve represent the positions of the study-specific relative risks. The value of \Sexpr{xref} grams/day served as referent. The relative risks are plotted on the log scale.
+\label{fig:curve1}
+}
+\end{figure}
+
+<<curve2, tidy = FALSE, fig.keep = 'none', echo = FALSE>>=
+xref <- 12
+with(predict(spl, newdata, xref, exp = TRUE),{
+  plot(get("rcs(dose, knots)dose"), pred, type = "l", ylim = c(.8, 1.8),
+       ylab = "Relative risk", xlab = "Alcohol consumption, grams/day", 
+       log = "y", bty = "l", las = 1)
+  matlines(get("rcs(dose, knots)dose"), cbind(ci.ub, ci.lb), 
+           col = 1, lty = "dashed")
+})
+points(dose, predict(lin, newdata, xref)$pred, type = "l", lty = 3)
+rug(alcohol_crc$dose)
+@
+
+A tabular presentation of predicted point and interval estimates of the relative risks for selected values of the exposure of the two fitted models is greatly facilitated by the \code{predict} function. For example, a table of pooled relative risks of colorectal cancer risk for a range of alcohol consumption between 0 and 60 grams/day (with step by 12 grams/day) is obtained as follow
+
+<<pred.spl>>=
+dataTab <- data.frame(dose = seq(0, 60, 12))
+predLin <- predict(lin, dataTab, exp = TRUE)
+predSpl <- predict(spl, dataTab, exp = TRUE)
+round(cbind(lin = predLin, spl = predSpl[4:6]), 2)
+@
+
+
+The reference exposure used to obtain predicted relative risks can be easily modified by setting $x_{\textrm{ref}}$ to a different value.
+For example, one could use $x_{\textrm{ref}} = 12$ grams/day (corresponding to 1 standard drink) as graphically shown in Figure~\ref{fig:curve2}. 
+
+\begin{figure}[!htb]
+\centering
+<<curve2plot, echo=FALSE>>=
+<<curve2>>
+@
+\caption{Pooled dose-response association between alcohol consumption and colorectal cancer risk (solid line). Alcohol consumption was modeled with restricted cubic splines in a multivariate random-effects dose-response model. Dash lines represent the 95\% confidence intervals for the spline model. The dotted line represents the linear trend. Tick marks below the curve represent the positions of the study-specific relative risks. The value of \Sexpr{xref} grams/day served as referent. The relative risks are plotted on the log scale.
+\label{fig:curve2}
+}
+\end{figure}
+
+
+\section{Conclusion}
+ 
+We presented the key elements involved in a dose-response meta-analysis of epidemiological data. 
+These elements includes reconstructing the variance/covariance matrix of published relative risks, testing hypothesis, predictions, and graphical presentation of the pooled trend. We described a two-stage approach to combine either linear or non-linear dose-response associations. Applications of the novel \proglang{R} package \pkg{dosresmeta} were illustrated through several worked examples. 
+
+One strength of this paper is to provide an accessible introduction to multivariate dose-response meta-analysis. In particular, we showed how to flexibly model a quantitative exposure using spline transformations and how to present graphically the predicted pooled relative risks using different reference values. 
+Although dose-response meta-analyses are increasingly popular and published in the medical literature using commercial statistical software, no procedures were available for the free software programming language of  \proglang{R}. Therefore, another strength of this paper is to present the first release of the \pkg{dosresmeta} package written for \proglang{R}.
+
+In conclusion, this paper described the main steps involved in a dose-response meta-analysis. The \pkg{dosresmeta} package as well as worked examples can be useful to introduce researchers to the application of this increasingly popular method.
+
+%\newpage
+\bibliography{biblio}
+
+\end{document}
+\end{document}

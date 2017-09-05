@@ -157,8 +157,7 @@ dosresmeta <- function(formula, id, v, type,  cases, n, sd, data,
    } else {
       as.factor(eval(mf.id, data, enclos = sys.frame(sys.parent())))      
    }
-   covariance <- match.arg(covariance, 
-                           c("gl", "h", "md", "smd", "user", "indep"))
+   covariance <- match.arg(covariance, c("gl", "h", "md", "smd", "user", "indep"))
    proc <- match.arg(proc, c("1stage", "2stage"))
    method <- if (proc == "1stage"){
       match.arg(method, c("fixed", "ml", "reml"))
@@ -172,12 +171,19 @@ dosresmeta <- function(formula, id, v, type,  cases, n, sd, data,
    }
    ## Evaluating arguments only if needed
    if (covariance %in% c("md", "smd")){
+      if (missing(sd) | missing(n)){
+         stop("Arguments md and smd are required when covariance equal to 'md' or 'smd'")
+      }
       mf.sd <- mf[[match("sd", names(mf))]]
       mf.n <- mf[[match("n", names(mf))]]
       sd <- eval(mf.sd, data, enclos = sys.frame(sys.parent()))
       n <- eval(mf.n, data, enclos = sys.frame(sys.parent()))
+      
    }
    if (covariance %in% c("gl", "h")){
+      if (missing(cases) | missing(n) | missing(type)){
+         stop("Arguments cases, n, and type are required when covariance equal to 'gl' or 'h'")
+      }
       mf.cases <- mf[[match("cases", names(mf))]]
       mf.n <- mf[[match("n", names(mf))]]
       mf.type <- mf[[match("type", names(mf))]]      
@@ -207,9 +213,17 @@ dosresmeta <- function(formula, id, v, type,  cases, n, sd, data,
    mf.se <- mf[[match("se", names(mf))]]
    mf.lb <- mf[[match("lb", names(mf))]]
    mf.ub <- mf[[match("ub", names(mf))]]
+   if (covariance %in% c("gl", "h")){
+      if (is.null(mf.v) & is.null(mf.se) & is.null(mf.lb) & is.null(mf.ub)){
+         stop("One of the arguments v, se, or both lb and ub, needs to be specifed")
+      }
+   }
    ## probably to be simplified (less flexible)
    if (is.null(mf.v)){
       se <- eval(mf.se, data, enclos = sys.frame(sys.parent()))
+      if (any(se < 0, na.rm = TRUE)){
+         stop("Standard errors cannot be negative")
+      }
       if (is.null(mf.se) && !(is.null(mf.lb) | is.null(mf.ub))){
          lb <- eval(mf.lb, data, enclos = sys.frame(sys.parent()))
          ub <- eval(mf.ub, data, enclos = sys.frame(sys.parent()))
@@ -223,6 +237,12 @@ dosresmeta <- function(formula, id, v, type,  cases, n, sd, data,
       v <- eval(mf.v, data, enclos = sys.frame(sys.parent()))
    }
    v[is.na(v)] <- 0
+   if (any(v < 0, na.rm = TRUE)){
+      stop("Variances cannot be negative")
+   }
+   if (sum(v == 0) > 1L & length(unique(id)) == 1L){
+      stop("It seems multiple studies are including without corresponding id argument. Please check.")
+   }
    ## model frame for: fixed-effects (mfmX) and random-effects (mfmZ)
    mfmX <- model.frame(formulaMod, data)
    mfmZ <- model.frame(formula, data)
@@ -250,13 +270,21 @@ dosresmeta <- function(formula, id, v, type,  cases, n, sd, data,
          ylist, sdlist, nlist, SIMPLIFY = FALSE)
       y <- do.call("rbind", lapply(covlist,  function(x) x$y))
       mfmX[, 1] <- y
-      v <- cbind(unlist(lapply(covlist,  function(x) x$v)))
+      v <- cbind(unlist(lapply(covlist, function(x) x$v)))
       vlist <- lapply(unique(id), function(j) cbind(v[id == j]))
       Slist <- lapply(covlist, function(x) x$S)
    }
    if (covariance == "user"){
       if (!is.list(Slist)){
          Slist <- list(Slist)
+      }
+      if (any(sapply(Slist, function(s) nrow(s) != ncol(s)))){
+         stop ("At least one of the covariance matrix is not squared")
+      }
+      if (any(do.call("c", Map(function(v, s){
+         length(v) != (nrow(s) + 1)
+      }, vlist, Slist)))){
+         stop ("The dimension of Slist does not match the data")
       }
    }
    if (covariance == "indep"){
@@ -327,6 +355,9 @@ dosresmeta.fit <- function (X, Z, y, Slist, id, method, control,
       !nay[j, ], , drop = FALSE])
    nalist <- lapply(unique(id), function(j) nay[id == j])
    if (proc == "2stage"){
+      if (any(k < p)){
+         stop("A two-stage approach requires that each study provides at least p non-referent obs (p is the number of columns of the design matrix X)")
+      }
       ## obs: the argument of dosresmeta.fixed need to be list and since mapply
       ## requires additional list, I had to use lapply(. , . list(.))
       twoStage <- mapply(function(X, y, S, na)
@@ -418,17 +449,16 @@ dosresmeta.fit <- function (X, Z, y, Slist, id, method, control,
 #' 
 #' @export dosresmeta.control
 
-dosresmeta.control <- function(optim = list(), showiter = FALSE, maxiter = 100, 
+dosresmeta.control <- function(optim = list(), showiter = FALSE, maxiter = 1000, 
                                initPsi = NULL, igls.iter = 10, gr = FALSE,
                                reltol = sqrt(.Machine$double.eps),
                                set.negeigen = sqrt(.Machine$double.eps)){
-   optim <- modifyList(optim, list(fnscale = -1, maxit = maxiter, 
-                                   reltol = reltol))
+   optim <- modifyList(list(fnscale = -1, maxit = maxiter, reltol = reltol), 
+                       optim)
    if (showiter){
       optim$trace <- 6
       optim$REPORT <- 1
    }
-   if (igls.iter < 1) stop("'igls.iter' in the control list must be positive")
    ## gradient still to be defined (if actually needed)
    list(optim = optim, showiter = showiter, maxiter = maxiter, 
         initPsi = initPsi, igls.iter = igls.iter, gr = gr,
@@ -546,7 +576,7 @@ dosresmeta.ml <- function(Xlist, Zlist, ylist, Slist, nalist, q, nall, control, 
    opt <- optim(par = par, fn = fn, gr = gr, Xlist = Xlist, Zlist = Zlist, 
                 ylist = ylist, Slist = Slist, nalist = nalist, q = q, 
                 nall = nall, ctrl = control, 
-                method = "BFGS", control = control$optim)
+                method = "Nelder-Mead", control = control$optim)
    Psi <- par2Psi(opt$par, q)
    gls <- glsfit(Xlist, Zlist, ylist, Slist, nalist, Psi, onlycoef = FALSE)
    qrinvtUX <- qr(gls$invtUX)
@@ -572,7 +602,7 @@ dosresmeta.reml <- function(Xlist, Zlist, ylist, Slist, nalist, q, nall, control
    opt <- optim(par = par, fn = fn, gr = gr, Xlist = Xlist, Zlist = Zlist, 
                 ylist = ylist, Slist = Slist, nalist = nalist, q = q, 
                 nall = nall, ctrl = control, 
-                method = "BFGS", control = control$optim)
+                method = "Nelder-Mead", control = control$optim)
    Psi <- par2Psi(opt$par, q)
    gls <- glsfit(Xlist, Zlist, ylist, Slist, nalist, Psi, onlycoef = FALSE)
    qrinvtUX <- qr(gls$invtUX)
