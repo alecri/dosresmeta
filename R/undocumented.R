@@ -40,7 +40,7 @@ initpar <- function(Xlist, Zlist, ylist, Slist, nalist, q, control){
    initPsi <- if (!is.null(initPsi <- control$initPsi)) {
       initPsi <- xpndMat(initPsi)
    } else {
-      diag(0.001, q)
+      diag(.0001, q)
    }
    if (control$igls.iter != 0){
       for (i in seq(control$igls.iter)){
