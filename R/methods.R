@@ -547,23 +547,23 @@ print.qtest.dosresmeta <- function (x, digits = 3, ...){
 #'                     se = se, cases = cases, n = n, data = alcohol_cvd) 
 #' 
 #' ## Predicted linear trend (on RR scale)
-#' #predict(lin, delta = 12, expo = TRUE)
+#' predict(lin, delta = 12, expo = TRUE)
 #' 
 #' ## Predicted modeled data from quadratic model (on RR scale)
-#' #predict(quadr, expo = TRUE)
+#' predict(quadr, expo = TRUE)
 #' 
 #' ## Plot predicted dose-response relation
-#' #with(predict(quadr, order = TRUE, expo = TRUE), {
-#' #   plot(dose, pred, log = "y", type = "l",
-#' #        xlim = c(0, 45), ylim = c(.4, 2))
-#' #   lines(dose,  ci.lb, lty = 2)
-#' #   lines(dose, ci.ub, lty = 2)
-#' #   rug(dose, quiet = TRUE)
-#' #})
+#' with(predict(quadr, order = TRUE, expo = TRUE), {
+#'    plot(dose, pred, log = "y", type = "l",
+#'         xlim = c(0, 45), ylim = c(.4, 2))
+#'    lines(dose,  ci.lb, lty = 2)
+#'    lines(dose, ci.ub, lty = 2)
+#'    rug(dose, quiet = TRUE)
+#' })
 #' 
 #' ## Prediction for new values from quadratic model (on RR scale)
 #' newdata <- data.frame(dose = seq(0, 50, 5))
-#' #predict(quadr, newdata, expo = TRUE)
+#' predict(quadr, newdata, expo = TRUE)
 #' 
 #' ## Loading data
 #' data("ari")
@@ -574,12 +574,12 @@ print.qtest.dosresmeta <- function (x, digits = 3, ...){
 #' 
 #' ## Smoothed plot
 #' newdata <- data.frame(dose = seq(0, 30, 1))
-#' #with(predict(mod, newdata), {
-#' #   plot(dose, pred, type = "l", ylim = c(0, .6))
-#' #   lines(dose,  ci.lb, lty = 2)
-#' #   lines(dose, ci.ub, lty = 2)
-#' #   rug(dose, quiet = TRUE)
-#' #})
+#' with(predict(mod, newdata), {
+#'    plot(dose, pred, type = "l", ylim = c(0, .6))
+#'    lines(dose,  ci.lb, lty = 2)
+#'    lines(dose, ci.ub, lty = 2)
+#'    rug(dose, quiet = TRUE)
+#' })
 #' 
 #' @rdname predict.dosresmeta
 #' @method predict dosresmeta

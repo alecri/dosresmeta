@@ -3,7 +3,7 @@
 \name{dosresmeta}
 \alias{dosresmeta}
 \alias{dosresmeta.fit}
-\title{Performing Multivariate Dose-Response Meta-Analysis}
+\title{Multivariate Dose-Response Meta-Analysis}
 \usage{
 dosresmeta(formula, id, v, type, cases, n, sd, data, mod = ~1,
   intercept = F, center = T, se, lb, ub, covariance = "gl",

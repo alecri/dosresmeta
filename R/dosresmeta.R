@@ -1,4 +1,4 @@
-#' Performing Multivariate Dose-Response Meta-Analysis
+#' Multivariate Dose-Response Meta-Analysis
 #' 
 #' @description The function \code{dosresmeta} estimates a dose-response curve from either single or multiple summarized dose-response data, taking into account 
 #' the correlation among observations and heterogeneity across studies. The function \code{dosresmeta.fit} is a wrapper for actual fitting functions based on 
@@ -589,7 +589,7 @@ dosresmeta.ml <- function(Xlist, Zlist, ylist, Slist, nalist, q, nall, control, 
    list(coefficients = gls$coef, vcov = vcov, Psi = Psi, residuals = res, 
         fitted.values = fitted, df.residual = nall - rank - length(par), 
         rank = rank, logLik = opt$value, converged = opt$convergence == 
-           0, niter = opt$counts[[2]], control = control)
+           0, niter = opt$counts[[1]], control = control)
 }
 
 
@@ -615,7 +615,7 @@ dosresmeta.reml <- function(Xlist, Zlist, ylist, Slist, nalist, q, nall, control
    list(coefficients = gls$coef, vcov = vcov, Psi = Psi, residuals = res, 
         fitted.values = fitted, df.residual = nall - rank - length(par), 
         rank = rank, logLik = opt$value, converged = opt$convergence == 
-           0, niter = opt$counts[[2]], control = control)
+           0, niter = opt$counts[[1]], control = control)
 }
 
 

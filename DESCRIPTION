@@ -1,14 +1,16 @@
 Package: dosresmeta
 Type: Package
-Title: Performing Multivariate Dose-Response Meta-Analysis
+Title: Multivariate Dose-Response Meta-Analysis
 Version: 2.0.1
-Date: 2017-09-04
-Author: Alessio Crippa
+Date: 2017-09-07
+Authors@R: person("Alessio", "Crippa", email = "alessio.crippa@ki.se",
+                  role = c("aut", "cre"))
 Maintainer: Alessio Crippa <alessio.crippa@ki.se>
-Description: It consists of a collection of
-    functions to estimate dose-response relations from summarized dose-response
-    data and to combine them according to principles of (multivariate)
-    random-effects model.
+Description: Estimates dose-response relations from summarized dose-response
+    data and to combines them according to principles of (multivariate)
+    random-effects models.  
+URL: https://alecri.github.io/software/dosresmeta.html
+BugReports: https://github.com/alecri/dosresmeta/issues
 License: GPL-2
 Depends:
     mvmeta
