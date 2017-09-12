@@ -3,7 +3,7 @@
 \docType{package}
 \name{dosresmeta-package}
 \alias{dosresmeta-package}
-\title{Performing multivariate dose-response meta-analysis}
+\title{Multivariate dose-response meta-analysis}
 \description{
 It consists of a collection of functions to estimate dose-response
 relations from summarized dose-response data for both continuous and binary outcomes, and to combine them according to principles of (multivariate) random-effects model.
@@ -78,9 +78,14 @@ For instance, dosresmeta:::glsfit displays the code of the function glsfit.
 
 The package includes the datasets \code{\link{alcohol_crc}}, \code{\link{alcohol_cvd}}, \code{\link{ari}}, and \code{\link{cc_ex}} as data frames,
 which are used in the examples.
+
+Use citation("dosresmeta") to cite this package.
 }
 
 \references{
+Alessio Crippa, Nicola Orsini (2016). Multivariate Dose-Response Meta-Analysis: The
+dosresmeta R Package. Journal of Statistical Software, Code Snippets, 72(1), 1-15.doi:10.18637/jss.v072.c01
+ 
 Greenland, S., Longnecker, M. P. (1992). Methods for trend estimation from summarized dose-response data, with applications to meta-analysis.
 American journal of epidemiology, 135(11), 1301-1309.
 

@@ -2,7 +2,7 @@
    packageStartupMessage("This is dosresmeta 2.1.0. For an overview type: help('dosresmeta-package').")
 }
 
-#' Performing multivariate dose-response meta-analysis
+#' Multivariate dose-response meta-analysis
 #' @name dosresmeta-package
 #' @docType package
 #' @import mvmeta
@@ -77,10 +77,15 @@
 #'
 #' The package includes the datasets \code{\link{alcohol_crc}}, \code{\link{alcohol_cvd}}, \code{\link{ari}}, and \code{\link{cc_ex}} as data frames,
 #' which are used in the examples.
+#' 
+#' Use citation("dosresmeta") to cite this package.
 #'
 #' @author Alessio Crippa, \email{alessio.crippa@@ki.se}
 #'
 #' @references
+#' Alessio Crippa, Nicola Orsini (2016). Multivariate Dose-Response Meta-Analysis: The
+#' dosresmeta R Package. Journal of Statistical Software, Code Snippets, 72(1), 1-15.doi:10.18637/jss.v072.c01
+#'  
 #' Greenland, S., Longnecker, M. P. (1992). Methods for trend estimation from summarized dose-response data, with applications to meta-analysis.
 #' American journal of epidemiology, 135(11), 1301-1309.
 #'
