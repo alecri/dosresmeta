@@ -1,4 +1,4 @@
-.onAttach <- function(libname, pkgname) {
+.onAttach <- function(...) {
    packageStartupMessage("This is dosresmeta 2.1.0. For an overview type: help('dosresmeta-package').")
 }
 
@@ -6,6 +6,7 @@
 #' @name dosresmeta-package
 #' @docType package
 #' @import mvmeta
+# @importFrom mvmeta mvmeta.fit blup qtest vechMat xpndMat
 #' @importFrom stats lm AIC BIC delete.response model.frame model.matrix model.response optim pchisq pnorm qnorm symnum terms update
 #' @importFrom utils head modifyList
 #'

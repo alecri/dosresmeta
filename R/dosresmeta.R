@@ -355,7 +355,7 @@ dosresmeta.fit <- function (X, Z, y, Slist, id, method, control,
       !nay[j, ], , drop = FALSE])
    nalist <- lapply(unique(id), function(j) nay[id == j])
    if (proc == "2stage"){
-      if (any(k < p)){
+      if (any(k < ifelse(method == "fixed", p, q))){
          stop("A two-stage approach requires that each study provides at least p non-referent obs (p is the number of columns of the design matrix X)")
       }
       ## obs: the argument of dosresmeta.fixed need to be list and since mapply
