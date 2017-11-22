@@ -161,6 +161,7 @@ logLik.dosresmeta <- function (object, ...){
 #' @param x an object of class \code{dosresmeta} or \code{summary.dosresmeta} produced by \code{\link{dosresmeta}} or \code{summary.dosresmeta}, respectively.
 #' @param ci.level the confidence level used for defining the confidence intervals for the estimates of the (fixed-effects) coefficients.
 #' @param digits an integer specifying the number of digits to which printed results must be rounded.
+#' @param signif.stars logical. If TRUE, 'significance stars' are printed for each coefficient.
 #' @param \dots further arguments passed to or from other methods.
 #'
 #' @details the \code{print} method for class \code{dosresmeta} only returns basic information of the fitted model, namely the call, 
@@ -274,7 +275,8 @@ summary.dosresmeta <- function(object, ci.level = 0.95, ...){
 #' @method print summary.dosresmeta
 #' @export
 
-print.summary.dosresmeta <- function(x, digits = 4, ...){
+print.summary.dosresmeta <- function(x, digits = max(3, getOption("digits") - 3), 
+                                     signif.stars = getOption("show.signif.stars"), ...){
    methodname <- c("reml", "ml", "fixed")
    methodlabel <- c("REML", "ML", "Fixed")
    covariancename <- c("h", "gl", "md", "smd", "user", "indep")
@@ -304,15 +306,19 @@ print.summary.dosresmeta <- function(x, digits = 4, ...){
        pchi2, "\n", sep = "")
    cat("\n")
    cat("Fixed-effects coefficients", "\n", sep = "")
-   signif <- symnum(x$coefficients[, "Pr(>|z|)"], corr = FALSE, 
-                    na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 1), 
-                    symbols = c("***", "**", "*", ".", " "))
    tabletot <- formatC(x$coefficients, digits = digits, format = "f")
-   tabletot <- cbind(tabletot, signif)
-   colnames(tabletot)[7] <- ""
+   if (signif.stars){
+      signif <- symnum(x$coefficients[, "Pr(>|z|)"], corr = FALSE, 
+                       na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 1), 
+                       symbols = c("***", "**", "*", ".", " "))
+      tabletot <- cbind(tabletot, signif)
+      colnames(tabletot)[7] <- ""
+   }
    #rownames(tabletot) <- x$lab$p
    print(tabletot, quote = FALSE, right = TRUE, print.gap = 2)
-   cat("---\nSignif. codes: ", attr(signif, "legend"), "\n\n")
+   if (signif.stars){
+      cat("---\nSignif. codes: ", attr(signif, "legend"), "\n\n")
+   }
    k <- x$dim$q #ifelse(x$proc == "2stages", x$dim$k, x$dim$p)
    if (!x$method == "fixed"){
       cat("Between-study random-effects (co)variance components", 

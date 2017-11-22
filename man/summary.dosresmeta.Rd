@@ -10,7 +10,8 @@
 
 \method{summary}{dosresmeta}(object, ci.level = 0.95, ...)
 
-\method{print}{summary.dosresmeta}(x, digits = 4, ...)
+\method{print}{summary.dosresmeta}(x, digits = max(3, getOption("digits") -
+  3), signif.stars = getOption("show.signif.stars"), ...)
 }
 \arguments{
 \item{x}{an object of class \code{dosresmeta} or \code{summary.dosresmeta} produced by \code{\link{dosresmeta}} or \code{summary.dosresmeta}, respectively.}
@@ -22,6 +23,8 @@
 \item{object}{an object of class \code{dosresmeta} produced by \code{\link{dosresmeta}}.}
 
 \item{ci.level}{the confidence level used for defining the confidence intervals for the estimates of the (fixed-effects) coefficients.}
+
+\item{signif.stars}{logical. If TRUE, 'significance stars' are printed for each coefficient.}
 }
 \value{
 The \code{summary} method function for \code{dosresmeta} objects produces a list of class "\code{summary.dosresmeta}".
