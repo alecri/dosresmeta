@@ -318,6 +318,8 @@ print.summary.dosresmeta <- function(x, digits = max(3, getOption("digits") - 3)
    print(tabletot, quote = FALSE, right = TRUE, print.gap = 2)
    if (signif.stars){
       cat("---\nSignif. codes: ", attr(signif, "legend"), "\n\n")
+   } else {
+      cat("\n\n")
    }
    k <- x$dim$q #ifelse(x$proc == "2stages", x$dim$k, x$dim$p)
    if (!x$method == "fixed"){
