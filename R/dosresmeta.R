@@ -200,7 +200,7 @@ dosresmeta <- function(formula, id, v, type,  cases, n, sd, data,
       ## problem if the user specify no intercept
       formula <- update(formula, . ~ . + 1)
       update(formula, paste(". ~ . +", paste(
-         paste(formula[3], attr(terms(mod), "term.labels"), sep = ":"), 
+         paste(attr(terms(formula), "term.labels"), attr(terms(mod), "term.labels"), sep = ":"), 
          collapse = " + ")))
    } else {
       formula
