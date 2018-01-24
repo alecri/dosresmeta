@@ -384,7 +384,7 @@ NULL
 #' and cardiovascular mortality.
 #'
 #' @docType data
-#' @format A data frame with 100 observations on the following 9 variables:
+#' @format A data frame with 100 observations on the following 12 variables:
 #' \tabular{ll}{
 #' \code{id} \tab id of the studies included in the analysis.\cr
 #' \code{author} \tab names of the first author.\cr
@@ -395,6 +395,9 @@ NULL
 #' \code{n} \tab total number of subjects (type = "ci") or person-years (type = "ir") for each exposure level.\cr
 #' \code{logrr} \tab natural logarithm of the adjusted risk estimates.\cr
 #' \code{se} \tab standard error for the logarithm of the adjusted risk estimates.\cr
+#' \code{gender} \tab character variable for the gender of the partecipants.\cr
+#' \code{area} \tab character variable for the study location.\cr
+#' \code{smoking} \tab character variable for the type of smoking adjustment.\cr
 #' }
 #'
 #' @author Alessio Crippa, <\email{alessio.crippa@@ki.se}>
