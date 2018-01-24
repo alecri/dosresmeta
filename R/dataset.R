@@ -377,6 +377,40 @@ NULL
 NULL
 
 
+#' Additional 3 prospective studies on the relation between coffee consumption and all-cause mortality
+#'
+#' @name coffee_mort_add
+#' @description The dataset reports the summarized dose-response results from 3 additional prospective 
+#' studies on the relation between coffee consumption and all-cause mortality. The studies do not report
+#' information on the number of cases and participants/person-time.
+#'
+#' @docType data
+#' @format A data frame with 109 observations on the following 11 variables:
+#' \tabular{ll}{
+#' \code{id} \tab id of the studies included in the analysis.\cr
+#' \code{author} \tab names of the first author.\cr
+#' \code{year} \tab year of publication.\cr
+#' \code{type} \tab code for study design.\cr
+#' \code{dose} \tab assigned dose levels.\cr
+#' \code{cases} \tab number of cases for each exposure level.\cr
+#' \code{n} \tab total number of subjects (type = "ci") or person-years (type = "ir") for each exposure level.\cr
+#' \code{logrr} \tab natural logarithm of the adjusted risk estimates.\cr
+#' \code{se} \tab standard error for the logarithm of the adjusted risk estimates.\cr
+#' \code{gender} \tab factor variable for the gender of the partecipants.\cr
+#' \code{area} \tab factor variable for the study location.\cr
+#' }
+#'
+#' @author Alessio Crippa, <\email{alessio.crippa@@ki.se}>
+#' 
+#' @references
+#' 
+#' Crippa A, Discacciati A, Larsson SC, Wolk A, Orsini N. Coffee Consumption and Mortality from All Causes, Cardiovascular Disease, and Cancer: 
+#' A Dose-Response Meta-Analysis. Am J Epidemiol. 2014 Aug 24. pii: kwu194.
+#' 
+#' @keywords data
+NULL
+
+
 #' Thirteen prospective studies on the relation between coffee consumption and cardiovascular mortality
 #'
 #' @name coffee_cvd
