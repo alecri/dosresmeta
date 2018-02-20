@@ -167,7 +167,7 @@ NULL
 NULL
 
 
-#' Six published studies on the relation between alcohol intake and cardiovascular disease risk.
+#' Six published studies on the relation between alcohol intake and cardiovascular disease risk
 #'
 #' @name alcohol_cvd
 #' @description The dataset reports the summarized dose-response results from six observational
@@ -230,7 +230,7 @@ NULL
 NULL
 
 
-#' Eight published studies on the relation between alcohol intake and colon-rectal cancer.
+#' Eight published studies on the relation between alcohol intake and colon-rectal cancer
 #'
 #' @name alcohol_crc
 #' @description The dataset reports the summarized dose-response results from eight prospective
@@ -257,7 +257,7 @@ NULL
 NULL
 
 
-#' Four published studies on the relation between alcohol intake and lung cancer.
+#' Four published studies on the relation between alcohol intake and lung cancer
 #'
 #' @name alcohol_lc
 #' @description The dataset reports the summarized dose-response results from four prospective
