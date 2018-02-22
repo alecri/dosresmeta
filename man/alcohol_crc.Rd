@@ -3,7 +3,7 @@
 \docType{data}
 \name{alcohol_crc}
 \alias{alcohol_crc}
-\title{Eight published studies on the relation between alcohol intake and colon-rectal cancer.}
+\title{Eight published studies on the relation between alcohol intake and colon-rectal cancer}
 \format{A data frame with 48 observations on the following 7 variables:
 \tabular{ll}{
 \code{id} \tab label for author's names (id variable).\cr

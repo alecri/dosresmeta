@@ -3,7 +3,7 @@
 \docType{data}
 \name{alcohol_lc}
 \alias{alcohol_lc}
-\title{Four published studies on the relation between alcohol intake and lung cancer.}
+\title{Four published studies on the relation between alcohol intake and lung cancer}
 \format{A data frame with 20? observations on the following 7 variables:
 \tabular{ll}{
 \code{id} \tab label for author's names (id variable).\cr

@@ -3,7 +3,7 @@
 \docType{data}
 \name{alcohol_cvd}
 \alias{alcohol_cvd}
-\title{Six published studies on the relation between alcohol intake and cardiovascular disease risk.}
+\title{Six published studies on the relation between alcohol intake and cardiovascular disease risk}
 \format{A data frame with 25 observations on the following 8 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
