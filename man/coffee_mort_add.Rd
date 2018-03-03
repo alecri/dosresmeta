@@ -3,7 +3,7 @@
 \docType{data}
 \name{coffee_mort_add}
 \alias{coffee_mort_add}
-\title{Additional 3 prospective studies on the relation between coffee consumption and all-cause mortality}
+\title{Additional two prospective studies on the relation between coffee consumption and all-cause mortality}
 \format{A data frame with 109 observations on the following 11 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
@@ -19,7 +19,7 @@
 \code{area} \tab factor variable for the study location.\cr
 }}
 \description{
-The dataset reports the summarized dose-response results from 3 additional prospective 
+The dataset reports the summarized dose-response results from two additional prospective 
 studies on the relation between coffee consumption and all-cause mortality. The studies do not report
 information on the number of cases and participants/person-time.
 }

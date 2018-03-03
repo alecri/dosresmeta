@@ -230,7 +230,7 @@ NULL
 NULL
 
 
-#' Eight published studies on the relation between alcohol intake and colon-rectal cancer
+#' Eight published studies on the relation between alcohol intake and colorectal cancer
 #'
 #' @name alcohol_crc
 #' @description The dataset reports the summarized dose-response results from eight prospective
@@ -377,10 +377,10 @@ NULL
 NULL
 
 
-#' Additional 3 prospective studies on the relation between coffee consumption and all-cause mortality
+#' Additional two prospective studies on the relation between coffee consumption and all-cause mortality
 #'
 #' @name coffee_mort_add
-#' @description The dataset reports the summarized dose-response results from 3 additional prospective 
+#' @description The dataset reports the summarized dose-response results from two additional prospective 
 #' studies on the relation between coffee consumption and all-cause mortality. The studies do not report
 #' information on the number of cases and participants/person-time.
 #'
