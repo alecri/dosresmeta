@@ -4,9 +4,9 @@
 \alias{predict.dosresmeta}
 \title{Predicted Values from dosresmeta Models}
 \usage{
-\method{predict}{dosresmeta}(object, newdata, xref, expo = FALSE, xref_vec,
-  ci.incl = TRUE, se.incl = FALSE, xref_pos = 1, delta, order = FALSE,
-  ci.level = 0.95, ...)
+\method{predict}{dosresmeta}(object, newdata, xref, expo = FALSE,
+  xref_vec, ci.incl = TRUE, se.incl = FALSE, xref_pos = 1, delta,
+  order = FALSE, ci.level = 0.95, ...)
 }
 \arguments{
 \item{object}{an object of class \code{dosreseta}.}

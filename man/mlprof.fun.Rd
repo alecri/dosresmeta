@@ -3,7 +3,6 @@
 \name{mlprof.fun}
 \alias{mlprof.fun}
 \alias{remlprof.fn}
-\alias{mlprof.fun}
 \alias{remlprof.gr}
 \alias{mlprof.fn}
 \alias{mlprof.gr}

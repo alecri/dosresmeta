@@ -283,9 +283,9 @@ hamling <- function(y, v, cases, n, type, data){
    else
       n[v==0]/sum(n)
    z0 <- if (as.character(type[1]) == "cc")
-      sum((n - cases)[v!=0])/sum(cases[v!=0])
+      sum(n - cases)/sum(cases)
    else
-      sum(n[v!=0])/sum(cases[v!=0])
+      sum(n)/sum(cases)
    init <- c(cases[v==0], n[v==0])
    opt <- optim(init, fun.h, v = v, y = y, type = type, p0 = p0, z0 = z0)
    pscounts <- est.ps.h(opt$par, v, y, type)
@@ -313,11 +313,11 @@ fun.h <- function(par, v, y, type, p0, z0){
    ps <- est.ps.h(par, v, y, type)
    if (as.character(type[1]) == "cc"){
       p1 <- (ps[v==0, 2] - ps[v==0, 1])/(sum(ps[, 2] - ps[, 1]))
-      z1 <- sum(ps[v!=0, 2] - ps[v!=0, 1])/sum(ps[v!=0, 1])
+      z1 <- sum(ps[, 2] - ps[, 1])/sum(ps[, 1])
    }
    else {
       p1 <- ps[v==0, 2]/sum(ps[, 2])
-      z1 <- sum(ps[v!=0, 2])/sum(ps[v!=0, 1])
+      z1 <- sum(ps[, 2])/sum(ps[, 1])
    }
    ((p1 - p0)/p0)^2+((z1 - z0)/z0)^2
 }
