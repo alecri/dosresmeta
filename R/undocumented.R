@@ -43,8 +43,8 @@ initpar <- function(Xlist, Zlist, ylist, Slist, nalist, q, control){
       } else {
          initPsi <- diag(.0001, q)
    }
-   if (control$igls.iter != 0){
-      for (i in seq(control$igls.iter)){
+   if (control$igls.inititer != 0){
+      for (i in seq(control$igls.inititer)){
          initPsi <- iter.igls(initPsi, Xlist, Zlist, ylist, Slist, nalist, q)
       } 
    }
@@ -135,4 +135,55 @@ fracpol.eval <- function(x, p = c(1, 1), shift, scale, scaling = TRUE, xname = "
    attr(Xp, "p") <- p
    attr(Xp, "scaling") <- scaling
    Xp
+}
+
+#' @noRd
+getGroups <- function (random, data) 
+{
+   if (is.null(random)) 
+      return(matrix(seq(nrow(data))))
+   random <- getList(random)
+   groups <- lapply(random, function(form) {
+      form[[2]] <- form[[2]][[3]]
+      model.frame(form, data)[[1]]
+   })
+   groups[[1]] <- as.factor(groups[[1]])
+   if ((len <- length(groups)) > 1L) 
+      for (i in 2:len) groups[[i]] <- factor(paste(groups[[i - 
+                                                              1]], groups[[i]], sep = "-"))
+   groups <- do.call(cbind, lapply(groups, unclass))
+   groups
+}
+
+#' @noRd
+mixmeta.control <- function (optim = list(), showiter = FALSE, maxiter = 100, initPsi = NULL, 
+          Psifix = NULL, Scor = NULL, addSlist = NULL, inputna = FALSE, 
+          inputvar = 10^4, loglik.iter = "hybrid", igls.inititer = 10, 
+          hessian = FALSE, vc.adj = TRUE, reltol = sqrt(.Machine$double.eps), 
+          checkPD = NULL, set.negeigen = sqrt(.Machine$double.eps)) 
+{
+   optim <- modifyList(list(fnscale = -1, maxit = maxiter, reltol = reltol), 
+                       optim)
+   if (showiter) {
+      optim$trace <- 6
+      optim$REPORT <- 1
+   }
+   loglik.iter <- match.arg(loglik.iter, c("hybrid", "newton", 
+                                           "igls", "rigls"))
+   if (igls.inititer <= 0L) 
+      igls.inititer <- 0
+   list(optim = optim, showiter = showiter, maxiter = maxiter, 
+        hessian = hessian, initPsi = initPsi, Psifix = Psifix, 
+        Scor = Scor, addSlist = addSlist, inputna = inputna, 
+        inputvar = inputvar, loglik.iter = loglik.iter, igls.inititer = igls.inititer, 
+        vc.adj = vc.adj, reltol = reltol, checkPD = checkPD, 
+        set.negeigen = set.negeigen)
+}
+
+#' @noRd
+getList <- function (object) 
+{
+   if (is.list(object)) 
+      object
+   else list(object)
 }

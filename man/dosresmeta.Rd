@@ -87,8 +87,8 @@ does not have an intercept and the values in the design matrix need to be center
 This is internally done, respectively, when \code{intercept = FALSE} and \code{center = TRUE} (default values).
 
 The function calls the wrapper \code{dosresmeta.fit} to perform the actual fitting. The latter prepares the data and calls specific fitting functions, 
-depending on the chosen procedure and method. For the two stages procedure, the second part of the analysis is performed using the function \code{\link{mvmeta.fit}} 
-from the \code{\link{mvmeta}} package. Different estimator are implemented in the package. The estimation options available are
+depending on the chosen procedure and method. For the two stages procedure, the second part of the analysis is performed using the function \code{\link{mixmeta.fit}} 
+from the \code{\link{mixmeta}} package. Different estimator are implemented in the package. The estimation options available are
 \itemize{
 \item Fixed-effects
 \item Maximum likelihood (ML)
@@ -166,7 +166,7 @@ Gasparrini, A., Armstrong, B.,  Kenward, M. G. (2012). Multivariate meta-analysi
 Statistics in Medicine, 31(29), 3821-3839.
 }
 \seealso{
-\code{\link{dosresmeta-package}}, \code{\link{mvmeta}}, \code{\link{covar.logrr}}, \code{\link{covar.smd}}
+\code{\link{dosresmeta-package}}, \code{\link{mixmeta}}, \code{\link{covar.logrr}}, \code{\link{covar.smd}}
 }
 \author{
 Alessio Crippa, \email{alessio.crippa@ki.se}

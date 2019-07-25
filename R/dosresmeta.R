@@ -46,8 +46,8 @@
 #' This is internally done, respectively, when \code{intercept = FALSE} and \code{center = TRUE} (default values).
 #' 
 #' The function calls the wrapper \code{dosresmeta.fit} to perform the actual fitting. The latter prepares the data and calls specific fitting functions, 
-#' depending on the chosen procedure and method. For the two stages procedure, the second part of the analysis is performed using the function \code{\link{mvmeta.fit}} 
-#' from the \code{\link{mvmeta}} package. Different estimator are implemented in the package. The estimation options available are
+#' depending on the chosen procedure and method. For the two stages procedure, the second part of the analysis is performed using the function \code{\link{mixmeta.fit}} 
+#' from the \code{\link{mixmeta}} package. Different estimator are implemented in the package. The estimation options available are
 #' \itemize{
 #' \item Fixed-effects
 #' \item Maximum likelihood (ML)
@@ -74,7 +74,7 @@
 #' Gasparrini, A., Armstrong, B.,  Kenward, M. G. (2012). Multivariate meta-analysis for non-linear and other multi-parameter associations. 
 #' Statistics in Medicine, 31(29), 3821-3839.
 #' 
-#' @seealso \code{\link{dosresmeta-package}}, \code{\link{mvmeta}}, \code{\link{covar.logrr}}, \code{\link{covar.smd}}
+#' @seealso \code{\link{dosresmeta-package}}, \code{\link{mixmeta}}, \code{\link{covar.logrr}}, \code{\link{covar.smd}}
 #' 
 #' @export dosresmeta
 #' 
@@ -372,12 +372,14 @@ dosresmeta.fit <- function (X, Z, y, Slist, id, method, control,
       Sbeta <- do.call("list", lapply(twoStage, function(x) x$vcov))
       Xstar <- model.matrix(mod, do.call("rbind", 
                                          lapply(lapply(unique(id), function(j) data[v!=0, ][id == j, ]), head, 1)))
-      fit <- mvmeta.fit(X = Xstar, y = beta, 
+      groups <- getGroups(NULL, cbind(beta, Xstar))
+      fit <- mixmeta.fit(X = Xstar, Z = NULL, y = beta, 
                         S = do.call("rbind", lapply(Sbeta, vechMat)), 
-                        method = method)
+                        groups = groups, method = method, bscov = "unstr", control = control)
       fit$bi <- beta
       fit$Si <- Sbeta
-      fit[c("bscov", "xlevels", "S")] <- NULL
+      fit$method <- method
+      fit[c("xlevels", "S")] <- NULL
       names(fit$lab) <- c("q", "p")
       if (q == p) fit$lab$p <- nq
       fit
@@ -409,8 +411,9 @@ dosresmeta.fit <- function (X, Z, y, Slist, id, method, control,
 
 #' Ancillary Parameters for Controlling the Fit in dosresmeta Models
 #' 
-#' @description This internal function sets the parameter options used for fitting dose-response meta-analytical models, commonly to pre-specified default values. 
-#' It is usually internally called by \code{\link{dosresmeta.fit}}.
+#' @description This internal function sets the parameter options used for fitting dose-response meta-analytical models, 
+#' commonly to pre-specified default values. It is usually internally called by \code{\link{dosresmeta.fit}}.
+#' The function has many more arguments than needed for dosresmeta. For more details see \code{\link{mixmeta.control}}.
 #' 
 #' @param optim list of parameters passed to the control argument of the function optim, which performs the quasi-Newton optimization in likelihood-based 
 #' random-effects models. See \code{\link{optim}}.
@@ -420,12 +423,24 @@ dosresmeta.fit <- function (X, Z, y, Slist, id, method, control,
 #' @param initPsi either a matrix or a vector of its lower triangular elements (with diagonal, taken by column) from which starting 
 #' values of the parameters of the between-study (co)variance matrix are derived, used in the optimization procedure for likelihood-based random-effects models. 
 #' If \code{NULL} (the default, and recommended), the starting value is created internally through an iterative generalized least square algorithm.
-#' @param igls.iter number of iteration of the iterative generalized least square algorithm to be run in the hybrid optimization procedure 
+#' @param Psifix either a matrix or a vector of its lower triangular elements (with diagonal, taken by column), or optionally a named list with one or more of such objects. 
+#' Used to define fixed parts of the random-effects 
+#' @param Scor either a scalar, vector or matrix representing the within-unit correlation(s) to be inputted when the covariances are not provided 
+#' in multivariate models, and ignored if they are.
+#' @param addSlist a list of m matrices for the (outer-level) groups of units defining the (known) error (co)variance structure, 
+#' when this cannot be passed through the argument S of mixmeta. 
+#' @param igls.inititer number of iteration of the iterative generalized least square algorithm to be run in the hybrid optimization procedure 
 #' of linkelihood-based models to provide the starting value.
+#' @param inputna logical. If missing values must be internally inputted. To be used with caution. 
+#' @param inputvar multiplier for inputting the missing variances, to be passed as an argument to inputna.
+#' @param loglik.iter iterative scheme used in in likelihood-based optimization routines. Options are "hybrid", "newton", and "igls" or "RIGLS". 
+#' @param hessian logical. If TRUE, the Hessian matrix of the parameters estimated in the optimization process is computed and returned. Only applicable to likelihood-based estimation methods.
+#' @param vc.adj logical. If TRUE, an adjustement to the way the marginal variance part is computed in the (co)variance components estimator is applied in the variance components estimator.
 #' @param reltol relative convergence tolerance in methods involving optimization procedures. The algorithm stops if it is unable to 
 #' reduce the value by a factor of \eqn{reltol * (abs(val) + reltol)} at a step.
-#' @param set.negeigen positive value. Value to which negative eigenvalues are to be set in estimators where such method is used
-#' to force positive semi-definiteness of the estimated between-study (co)variance matrix.
+#' @param checkPD logical. Determines if the semi-positiveness of within-unit error or random-effects (co)variance matrices must be checked.
+#' @param set.negeigen positive value. Value to which negative eigenvalues are to be set in estimators where such method is used to force semi-positive 
+#' definiteness of the estimated between-study (co)variance matrix.
 #'  
 #' @return A list with components named as the arguments.
 #'
@@ -436,11 +451,11 @@ dosresmeta.fit <- function (X, Z, y, Slist, id, method, control,
 #' ## print the iterations (see ?optim) and change the default for starting values
 #' dosresmeta(formula = logrr ~ dose, type = type, id = id, se = se, 
 #'            cases = cases, n = n, data = alcohol_cvd, proc = "1stage",
-#'            control = list(showiter = TRUE, igls.iter = 20))
+#'            control = list(showiter = TRUE, igls.inititer = 20))
 #'            
 #' @author Alessio Crippa, \email{alessio.crippa@@ki.se}
 #' 
-#' @seealso \code{\link{dosresmeta}}, \code{\link{dosresmeta-package}}, \code{\link{mvmeta.control}}
+#' @seealso \code{\link{dosresmeta}}, \code{\link{dosresmeta-package}}, \code{\link{dosresmeta.control}}
 #' 
 #' @references 
 #' 
@@ -449,20 +464,32 @@ dosresmeta.fit <- function (X, Z, y, Slist, id, method, control,
 #' 
 #' @export dosresmeta.control
 
-dosresmeta.control <- function(optim = list(), showiter = FALSE, maxiter = 1000, 
-                               initPsi = NULL, igls.iter = 10, gr = FALSE,
+dosresmeta.control <- function(optim = list(), showiter = FALSE, maxiter = 100, 
+                               initPsi = NULL, Psifix = NULL, Scor = NULL, 
+                               addSlist = NULL, inputna = FALSE,
+                               inputvar = 10^4, loglik.iter = "hybrid", 
+                               igls.inititer = 10, gr = FALSE,
+                               hessian = FALSE, vc.adj = TRUE, 
                                reltol = sqrt(.Machine$double.eps),
-                               set.negeigen = sqrt(.Machine$double.eps)){
+                               checkPD = NULL, set.negeigen = sqrt(.Machine$double.eps)){
    optim <- modifyList(list(fnscale = -1, maxit = maxiter, reltol = reltol), 
                        optim)
-   if (showiter){
+   if (showiter) {
       optim$trace <- 6
       optim$REPORT <- 1
    }
+   loglik.iter <- match.arg(loglik.iter, c("hybrid", "newton", 
+                                           "igls", "rigls"))
+   if (igls.inititer <= 0L) 
+      igls.inititer <- 0
    ## gradient still to be defined (if actually needed)
    list(optim = optim, showiter = showiter, maxiter = maxiter, 
-        initPsi = initPsi, igls.iter = igls.iter, gr = gr,
-        reltol = reltol, set.negeigen = set.negeigen)
+        hessian = hessian, initPsi = initPsi, Psifix = Psifix, 
+        Scor = Scor, addSlist = addSlist, inputna = inputna, 
+        inputvar = inputvar, loglik.iter = loglik.iter, 
+        igls.inititer = igls.inititer, gr = gr,
+        vc.adj = vc.adj, reltol = reltol, checkPD = checkPD, 
+        set.negeigen = set.negeigen)
 }
 
 
@@ -486,7 +513,7 @@ dosresmeta.control <- function(optim = list(), showiter = FALSE, maxiter = 1000,
 #' \code{\link{dosresmeta.ml}} and \code{\link{dosresmeta.reml}}, the computation involves Cholesky and and QR decompositions for computational stability and efficiency.
 #' 
 #' @return This function returns an intermediate list object, whose components are then processed by \code{\link{dosresmeta.fit}}. Other components are 
-#' added later through mvmeta to finalize an object of class "\code{dosresmeta}".
+#' added later through mixmeta to finalize an object of class "\code{dosresmeta}".
 #' 
 #' @references
 #' 
@@ -640,7 +667,7 @@ dosresmeta.reml <- function(Xlist, Zlist, ylist, Slist, nalist, q, nall, control
 #' 
 #' The maximization of the (restricted) likelihood starts with few runs of an iterative generalized least square algorithm implemented in \code{iter.igls}. 
 #' This can be regarded as a fast and stable way to get starting values close to the maximum for the Quasi-Newton iterative algorithm, implemented in 
-#' \code{\link{optim}}. Alternatively, starting values can be provided by the user in the control list (see \code{\link{mvmeta.control}}). 
+#' \code{\link{optim}}. Alternatively, starting values can be provided by the user in the control list (see \code{\link{mixmeta.control}}). 
 #' 
 #' These functions actually specify the profiled version of the (restricted) likelihood, expressed only in terms of random-effects parameters, while the 
 #' estimate of the fixed-effects coefficients is provided at each iteration by the internal function \code{glsfit}, based on the current value of 
@@ -657,7 +684,7 @@ dosresmeta.reml <- function(Xlist, Zlist, ylist, Slist, nalist, q, nall, control
 #' 
 #' @author Alessio Crippa, \email{alessio.crippa@@ki.se}
 #' 
-#' @seealso \code{dosresmeta}, \code{\link{mvmeta.fit}}, \code{\link{dosresmeta.control}}, \code{\link{mlprof.fn}}
+#' @seealso \code{dosresmeta}, \code{\link{mixmeta.fit}}, \code{\link{dosresmeta.control}}, \code{\link{mlprof.fn}}
 #' 
 #' @name mlprof.fun
 remlprof.fn <- function(par, Xlist, Zlist, ylist, Slist, nalist, q, nall, ctrl){ 

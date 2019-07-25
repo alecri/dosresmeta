@@ -11,7 +11,7 @@ procedure. For the one-stage analysis the dimensions refer to a one
 dimensional outcome, \eqn{p} predictors and \eqn{m} studies used for fitting
 the model. For the two-stage analysis the dimensions refer to \eqn{p}
 outcome parameters, no predictor (only the intercept) and \eqn{m} studies.
-The following components needs to be included in a legitimate mvmeta object: 
+The following components needs to be included in a legitimate dosresmeta object: 
 \tabular{ll}{ 
 \code{coefficients} \tab a \eqn{p}-dimensional vector of the fixed-effects coefficients. \cr 
 \code{vcov} \tab estimated \eqn{p \times p}{p x p} (co)variance matrix of the fixed-effects coefficients. \cr
@@ -55,11 +55,11 @@ A number of methods functions are available for \code{\link{dosresmeta}} objects
 Specifically-written method functions are defined for predict (standard predictions). The qtest method performs the Cochran Q test for heterogeneity only for a two-stage analysis. 
 Other methods have been produced for summary, logLik, coef, and vcov. Printing functions for the objects of classes defined above are also provided.
 All the methods above are visible (exported from the namespace) and documented. In additions, several default method functions for regression are also 
-applicable to objects of class "mvmeta", such as fitted, residuals, AIC, BIC and update, among others.
+applicable to objects of class "mixmeta", such as fitted, residuals, AIC, BIC and update, among others.
 }
 
 \seealso{
-\code{\link{dosresmeta}}, \code{\link{dosresmeta-package}}, \code{\link{mvmetaObject}}
+\code{\link{dosresmeta}}, \code{\link{dosresmeta-package}}, \code{\link{mixmetaObject}}
 }
 \author{
 Alessio Crippa, \email{alessio.crippa@ki.se}

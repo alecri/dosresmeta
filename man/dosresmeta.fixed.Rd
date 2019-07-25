@@ -25,7 +25,7 @@ dosresmeta.fixed(Xlist, Zlist, ylist, Slist, nalist, q, nall, control, ...)
 }
 \value{
 This function returns an intermediate list object, whose components are then processed by \code{\link{dosresmeta.fit}}. Other components are 
-added later through mvmeta to finalize an object of class "\code{dosresmeta}".
+added later through mixmeta to finalize an object of class "\code{dosresmeta}".
 }
 \description{
 This function implements a generalized least square estimator for fixed-effects dose-response meta-analysis. It is meant to be used internally 

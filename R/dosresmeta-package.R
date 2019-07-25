@@ -1,12 +1,11 @@
 .onAttach <- function(...) {
-   packageStartupMessage("This is dosresmeta 2.1.0. For an overview type: help('dosresmeta-package').")
+   packageStartupMessage("This is dosresmeta 2.1.1. For an overview type: help('dosresmeta-package').")
 }
 
 #' Multivariate dose-response meta-analysis
 #' @name dosresmeta-package
 #' @docType package
-#' @import mvmeta
-# @importFrom mvmeta mvmeta.fit blup qtest vechMat xpndMat
+#' @import mixmeta
 #' @importFrom stats lm AIC BIC delete.response model.frame model.matrix model.response optim pchisq pnorm qnorm symnum terms update
 #' @importFrom utils head modifyList
 #'
@@ -56,12 +55,12 @@
 #'
 #' @section Functions and data included in the package:
 #'
-#' The structure of the package and the internal functions resemble those of the \code{\link{mvmeta}} package. See \code{\link{mvmeta-package}} for a general overview.
+#' The structure of the package and the internal functions resemble those of the \code{\link{mixmeta}} package. See \code{\link{mixmeta-package}} for a general overview.
 #' The main function is \code{\link{dosresmeta}}, which performs the various models illustrated above. The function returns a list object of class
 #' "\code{dosresmeta}" (see \code{\link{dosresmetaObject}}).
 #'
 #' The estimation is carried out internally through \code{\link{dosresmeta.fit}}, a wrapper which prepares the data and calls specific estimation functions
-#' for fitting the models, depending on the chosen procedure. For the two-stage procedure, the second part of the analysis is performed using the function \code{\link{mvmeta.fit}}
+#' for fitting the models, depending on the chosen procedure. For the two-stage procedure, the second part of the analysis is performed using the function \code{\link{mixmeta.fit}}
 #' while estimators for random-effects models are implemented in the functions \code{\link{dosresmeta.ml}} and \code{\link{dosresmeta.reml}} for
 #' (restricted) maximum likelihood. For likelihood-based methods, iterative optimizations algorithms are used for maximizing
 #' the (restricted) likelihood. Fitting parameter options are set by \code{\link{dosresmeta.control}}.
@@ -98,7 +97,7 @@
 #' Gasparrini, A., Armstrong, B.,  Kenward, M. G. (2012). Multivariate meta-analysis for non-linear and other multi-parameter associations.
 #' Statistics in Medicine, 31(29), 3821-3839.
 #'
-#' @seealso \code{\link{dosresmeta}} \code{\link{mvmeta}}
+#' @seealso \code{\link{dosresmeta}} \code{\link{mixmeta}}
 
 NULL
 

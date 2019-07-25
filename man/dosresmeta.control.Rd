@@ -4,9 +4,11 @@
 \alias{dosresmeta.control}
 \title{Ancillary Parameters for Controlling the Fit in dosresmeta Models}
 \usage{
-dosresmeta.control(optim = list(), showiter = FALSE, maxiter = 1000,
-  initPsi = NULL, igls.iter = 10, gr = FALSE,
-  reltol = sqrt(.Machine$double.eps),
+dosresmeta.control(optim = list(), showiter = FALSE, maxiter = 100,
+  initPsi = NULL, Psifix = NULL, Scor = NULL, addSlist = NULL,
+  inputna = FALSE, inputvar = 10^4, loglik.iter = "hybrid",
+  igls.inititer = 10, gr = FALSE, hessian = FALSE, vc.adj = TRUE,
+  reltol = sqrt(.Machine$double.eps), checkPD = NULL,
   set.negeigen = sqrt(.Machine$double.eps))
 }
 \arguments{
@@ -21,23 +23,45 @@ random-effects models. See \code{\link{optim}}.}
 values of the parameters of the between-study (co)variance matrix are derived, used in the optimization procedure for likelihood-based random-effects models. 
 If \code{NULL} (the default, and recommended), the starting value is created internally through an iterative generalized least square algorithm.}
 
-\item{igls.iter}{number of iteration of the iterative generalized least square algorithm to be run in the hybrid optimization procedure 
+\item{Psifix}{either a matrix or a vector of its lower triangular elements (with diagonal, taken by column), or optionally a named list with one or more of such objects. 
+Used to define fixed parts of the random-effects}
+
+\item{Scor}{either a scalar, vector or matrix representing the within-unit correlation(s) to be inputted when the covariances are not provided 
+in multivariate models, and ignored if they are.}
+
+\item{addSlist}{a list of m matrices for the (outer-level) groups of units defining the (known) error (co)variance structure, 
+when this cannot be passed through the argument S of mixmeta.}
+
+\item{inputna}{logical. If missing values must be internally inputted. To be used with caution.}
+
+\item{inputvar}{multiplier for inputting the missing variances, to be passed as an argument to inputna.}
+
+\item{loglik.iter}{iterative scheme used in in likelihood-based optimization routines. Options are "hybrid", "newton", and "igls" or "RIGLS".}
+
+\item{igls.inititer}{number of iteration of the iterative generalized least square algorithm to be run in the hybrid optimization procedure 
 of linkelihood-based models to provide the starting value.}
 
 \item{gr}{indicates if the gradient of the (re)ml likelihood should be provided. FALSE by default.}
 
+\item{hessian}{logical. If TRUE, the Hessian matrix of the parameters estimated in the optimization process is computed and returned. Only applicable to likelihood-based estimation methods.}
+
+\item{vc.adj}{logical. If TRUE, an adjustement to the way the marginal variance part is computed in the (co)variance components estimator is applied in the variance components estimator.}
+
 \item{reltol}{relative convergence tolerance in methods involving optimization procedures. The algorithm stops if it is unable to 
 reduce the value by a factor of \eqn{reltol * (abs(val) + reltol)} at a step.}
 
-\item{set.negeigen}{positive value. Value to which negative eigenvalues are to be set in estimators where such method is used
-to force positive semi-definiteness of the estimated between-study (co)variance matrix.}
+\item{checkPD}{logical. Determines if the semi-positiveness of within-unit error or random-effects (co)variance matrices must be checked.}
+
+\item{set.negeigen}{positive value. Value to which negative eigenvalues are to be set in estimators where such method is used to force semi-positive 
+definiteness of the estimated between-study (co)variance matrix.}
 }
 \value{
 A list with components named as the arguments.
 }
 \description{
-This internal function sets the parameter options used for fitting dose-response meta-analytical models, commonly to pre-specified default values. 
-It is usually internally called by \code{\link{dosresmeta.fit}}.
+This internal function sets the parameter options used for fitting dose-response meta-analytical models, 
+commonly to pre-specified default values. It is usually internally called by \code{\link{dosresmeta.fit}}.
+The function has many more arguments than needed for dosresmeta. For more details see \code{\link{mixmeta.control}}.
 }
 \examples{
 ## Loading data
@@ -46,7 +70,7 @@ data("alcohol_cvd")
 ## print the iterations (see ?optim) and change the default for starting values
 dosresmeta(formula = logrr ~ dose, type = type, id = id, se = se, 
            cases = cases, n = n, data = alcohol_cvd, proc = "1stage",
-           control = list(showiter = TRUE, igls.iter = 20))
+           control = list(showiter = TRUE, igls.inititer = 20))
            
 }
 \references{
@@ -54,7 +78,7 @@ Gasparrini, A., Armstrong, B.,  Kenward, M. G. (2012). Multivariate meta-analysi
 Statistics in Medicine, 31(29), 3821-3839.
 }
 \seealso{
-\code{\link{dosresmeta}}, \code{\link{dosresmeta-package}}, \code{\link{mvmeta.control}}
+\code{\link{dosresmeta}}, \code{\link{dosresmeta-package}}, \code{\link{dosresmeta.control}}
 }
 \author{
 Alessio Crippa, \email{alessio.crippa@ki.se}

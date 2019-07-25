@@ -54,7 +54,7 @@ perform iterative optimization algorithms for estimating random effects meta-ana
 
 The maximization of the (restricted) likelihood starts with few runs of an iterative generalized least square algorithm implemented in \code{iter.igls}. 
 This can be regarded as a fast and stable way to get starting values close to the maximum for the Quasi-Newton iterative algorithm, implemented in 
-\code{\link{optim}}. Alternatively, starting values can be provided by the user in the control list (see \code{\link{mvmeta.control}}). 
+\code{\link{optim}}. Alternatively, starting values can be provided by the user in the control list (see \code{\link{mixmeta.control}}). 
 
 These functions actually specify the profiled version of the (restricted) likelihood, expressed only in terms of random-effects parameters, while the 
 estimate of the fixed-effects coefficients is provided at each iteration by the internal function \code{glsfit}, based on the current value of 
@@ -66,7 +66,7 @@ performed on the marginal (co)variance matrix in order to re-express the problem
 computation of matrix inverses and determinants. These equations are finally solved through a QR decomposition, which guarantees stability.
 }
 \seealso{
-\code{dosresmeta}, \code{\link{mvmeta.fit}}, \code{\link{dosresmeta.control}}, \code{\link{mlprof.fn}}
+\code{dosresmeta}, \code{\link{mixmeta.fit}}, \code{\link{dosresmeta.control}}, \code{\link{mlprof.fn}}
 }
 \author{
 Alessio Crippa, \email{alessio.crippa@ki.se}
