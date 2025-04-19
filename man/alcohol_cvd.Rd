@@ -4,7 +4,8 @@
 \name{alcohol_cvd}
 \alias{alcohol_cvd}
 \title{Six published studies on the relation between alcohol intake and cardiovascular disease risk}
-\format{A data frame with 25 observations on the following 8 variables:
+\format{
+A data frame with 25 observations on the following 8 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author of the study.\cr
@@ -14,7 +15,8 @@
 \code{n} \tab total number of subjects for each exposure level.\cr
 \code{logrr} \tab natural logarithm of the adjusted "relative risks".\cr
 \code{se} \tab standard error for the logarithm of the adjusted "relative risks".\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from six observational
 studies on the relation between alcohol intake and vascular disease risk. Four are case-control studies,

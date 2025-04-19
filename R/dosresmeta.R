@@ -46,8 +46,8 @@
 #' This is internally done, respectively, when \code{intercept = FALSE} and \code{center = TRUE} (default values).
 #' 
 #' The function calls the wrapper \code{dosresmeta.fit} to perform the actual fitting. The latter prepares the data and calls specific fitting functions, 
-#' depending on the chosen procedure and method. For the two stages procedure, the second part of the analysis is performed using the function \code{\link{mixmeta.fit}} 
-#' from the \code{\link{mixmeta}} package. Different estimator are implemented in the package. The estimation options available are
+#' depending on the chosen procedure and method. For the two stages procedure, the second part of the analysis is performed using the function \code{\link[mixmeta]{mixmeta.fit}} 
+#' from the \code{\link[mixmeta]{mixmeta}} package. Different estimator are implemented in the package. The estimation options available are
 #' \itemize{
 #' \item Fixed-effects
 #' \item Maximum likelihood (ML)
@@ -74,7 +74,7 @@
 #' Gasparrini, A., Armstrong, B.,  Kenward, M. G. (2012). Multivariate meta-analysis for non-linear and other multi-parameter associations. 
 #' Statistics in Medicine, 31(29), 3821-3839.
 #' 
-#' @seealso \code{\link{dosresmeta-package}}, \code{\link{mixmeta}}, \code{\link{covar.logrr}}, \code{\link{covar.smd}}
+#' @seealso \code{\link{dosresmeta-package}}, \code{\link[mixmeta]{mixmeta}}, \code{\link{covar.logrr}}, \code{\link{covar.smd}}
 #' 
 #' @export dosresmeta
 #' 
@@ -413,7 +413,7 @@ dosresmeta.fit <- function (X, Z, y, Slist, id, method, control,
 #' 
 #' @description This internal function sets the parameter options used for fitting dose-response meta-analytical models, 
 #' commonly to pre-specified default values. It is usually internally called by \code{\link{dosresmeta.fit}}.
-#' The function has many more arguments than needed for dosresmeta. For more details see \code{\link{mixmeta.control}}.
+#' The function has many more arguments than needed for dosresmeta. For more details see \code{\link[mixmeta]{mixmeta.control}}.
 #' 
 #' @param optim list of parameters passed to the control argument of the function optim, which performs the quasi-Newton optimization in likelihood-based 
 #' random-effects models. See \code{\link{optim}}.
@@ -667,7 +667,7 @@ dosresmeta.reml <- function(Xlist, Zlist, ylist, Slist, nalist, q, nall, control
 #' 
 #' The maximization of the (restricted) likelihood starts with few runs of an iterative generalized least square algorithm implemented in \code{iter.igls}. 
 #' This can be regarded as a fast and stable way to get starting values close to the maximum for the Quasi-Newton iterative algorithm, implemented in 
-#' \code{\link{optim}}. Alternatively, starting values can be provided by the user in the control list (see \code{\link{mixmeta.control}}). 
+#' \code{\link{optim}}. Alternatively, starting values can be provided by the user in the control list (see \code{\link[mixmeta]{mixmeta.control}}). 
 #' 
 #' These functions actually specify the profiled version of the (restricted) likelihood, expressed only in terms of random-effects parameters, while the 
 #' estimate of the fixed-effects coefficients is provided at each iteration by the internal function \code{glsfit}, based on the current value of 
@@ -684,7 +684,7 @@ dosresmeta.reml <- function(Xlist, Zlist, ylist, Slist, nalist, q, nall, control
 #' 
 #' @author Alessio Crippa, \email{alessio.crippa@@ki.se}
 #' 
-#' @seealso \code{dosresmeta}, \code{\link{mixmeta.fit}}, \code{\link{dosresmeta.control}}, \code{\link{mlprof.fn}}
+#' @seealso \code{dosresmeta}, \code{\link[mixmeta]{mixmeta.fit}}, \code{\link{dosresmeta.control}}, \code{\link{mlprof.fn}}
 #' 
 #' @name mlprof.fun
 remlprof.fn <- function(par, Xlist, Zlist, ylist, Slist, nalist, q, nall, ctrl){ 

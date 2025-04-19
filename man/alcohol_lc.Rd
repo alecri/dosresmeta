@@ -4,7 +4,8 @@
 \name{alcohol_lc}
 \alias{alcohol_lc}
 \title{Four published studies on the relation between alcohol intake and lung cancer}
-\format{A data frame with 20? observations on the following 7 variables:
+\format{
+A data frame with 20? observations on the following 7 variables:
 \tabular{ll}{
 \code{id} \tab label for author's names (id variable).\cr
 \code{type} \tab code for study design.\cr
@@ -13,7 +14,8 @@
 \code{peryears} \tab amount of person-time for each exposure level.\cr
 \code{logrr} \tab natural logarithm of the adjusted "relative risks".\cr
 \code{se} \tab standard error for the logarithm of the adjusted "relative risks".\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from four prospective
 studies on the relation between alcohol intake and lunger cancer.

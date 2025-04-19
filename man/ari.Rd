@@ -4,7 +4,8 @@
 \name{ari}
 \alias{ari}
 \title{Five clinical trials on the relation between aripiprazole and schizophrenia}
-\format{A data frame with 18 observations on the following 6 variables:
+\format{
+A data frame with 18 observations on the following 6 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author of the studies.\cr
@@ -12,7 +13,8 @@
 \code{y} \tab outcome variable: change in PANNS score after and before treatment.\cr
 \code{sd} \tab standard deviation of y for each exposure level.\cr
 \code{n} \tab total number of subjects for each exposure level.\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from five clinical trials on the relation between different levels of aripiprazole
 and severety of schizophrenia measured usign the PANSS medical score.

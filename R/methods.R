@@ -55,7 +55,7 @@
 #' 
 #' @author Alessio Crippa, \email{alessio.crippa@@ki.se}
 #' 
-#' @seealso \code{\link{dosresmeta}}, \code{\link{dosresmeta-package}}, \code{\link{mixmetaObject}}
+#' @seealso \code{\link{dosresmeta}}, \code{\link{dosresmeta-package}}, \code{\link[mixmeta]{mixmetaObject}}
 
 NULL
 
@@ -527,6 +527,7 @@ print.qtest.dosresmeta <- function (x, digits = 3, ...){
 #' @param xref_pos an optional scalar to indicate the position of the referent for the predicted relative risks. See details.
 #' @param order logical to indicate if the predictions need to be sorted by exposure levels.
 #' @param delta an optional scalar to specify to predict the linear trend related to that increase.
+#' @param safe_sort2stage logical value to ensure the correct order of coefficients for prediction. Only needed for 2stage.
 #' @param \dots further arguments passed to or from other methods.
 #' @details The method function \code{predict} produces predicted values from \code{dosresmeta} objects. When more than one study is included in the analysis,
 #' estimated predictions are only based on the fixed part of the model.
@@ -596,7 +597,8 @@ print.qtest.dosresmeta <- function (x, digits = 3, ...){
 
 predict.dosresmeta <- function(object, newdata, xref, expo = FALSE, xref_vec,
                                ci.incl = TRUE, se.incl = FALSE, xref_pos = 1,
-                               delta, order = FALSE, ci.level = 0.95, ...){
+                               delta, order = FALSE, ci.level = 0.95, 
+                               safe_sort2stage = TRUE, ...){
    if (!missing(delta)){
       if (object$dim$q > 1L)
          stop("'delta' option available only for linear trend")
@@ -639,6 +641,10 @@ predict.dosresmeta <- function(object, newdata, xref, expo = FALSE, xref_vec,
       X <- scale(X, xref, scale = FALSE)
    }
    pred <- tcrossprod(X, rbind(c(t(object$coefficients))))
+   if (object$proc == "2stage" & safe_sort2stage == TRUE & object$mod != ~ 1) {
+      pred <- tcrossprod(X[, sort(colnames(X))], rbind(c(t(
+         object$coefficients[sort(names(object$coefficients))]))))
+   }
    fit <- if (expo == T) {
       cbind(fit, exp(pred))
    } else {

@@ -4,7 +4,8 @@
 \name{sim_os}
 \alias{sim_os}
 \title{Simulated data for one-stage dose-response meta-analysis}
-\format{A data frame with 27 observations on the following 11 variables:
+\format{
+A data frame with 27 observations on the following 11 variables:
 \tabular{ll}{
 \code{xcati} \tab category limits for the continuous exposure.\cr
 \code{id} \tab id of the studies.\cr
@@ -17,7 +18,8 @@
 \code{urr} \tab upper bound for the confidence limits of the adjusted risk estimates.\cr
 \code{logrr} \tab natural logarithm of the adjusted risk estimates.\cr
 \code{se} \tab standard error for the logarithm of the adjusted risk estimates.\cr
-}}
+}
+}
 \description{
 The dataset contains simulated data from 9 case-control studies.
 }

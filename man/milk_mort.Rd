@@ -4,7 +4,8 @@
 \name{milk_mort}
 \alias{milk_mort}
 \title{Eleven prospective studies on the relation between milk consumption and all-cause mortality}
-\format{A data frame with 50 observations on the following 12 variables:
+\format{
+A data frame with 50 observations on the following 12 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author.\cr
@@ -18,7 +19,8 @@
 \code{ub} \tab upper bound for the confidence limits of the adjusted risk estimates.\cr
 \code{logrr} \tab natural logarithm of the adjusted risk estimates.\cr
 \code{se} \tab standard error for the logarithm of the adjusted risk estimates.\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from eleven prospective studies on the relation between milk consumption
 and all-cause mortality.

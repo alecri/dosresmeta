@@ -4,7 +4,8 @@
 \name{milk_ov}
 \alias{milk_ov}
 \title{Nine studies on the relation between milk consumption and ovarian cancer}
-\format{A data frame with 37 observations on the following 12 variables:
+\format{
+A data frame with 37 observations on the following 12 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author.\cr
@@ -18,7 +19,8 @@
 \code{ub} \tab upper bound for the confidence limits of the adjusted risk estimates.\cr
 \code{logrr} \tab natural logarithm of the adjusted risk estimates.\cr
 \code{se} \tab standard error for the logarithm of the adjusted risk estimates.\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from nine studies on the relation between milk consumption
 and ovarian cancer.

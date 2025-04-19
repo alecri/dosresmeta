@@ -4,7 +4,8 @@
 \name{process_bc}
 \alias{process_bc}
 \title{Ten studies on the relation between processed meat and bladder cancer}
-\format{A data frame with 73 observations on the following 15 variables:
+\format{
+A data frame with 73 observations on the following 15 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author.\cr
@@ -21,7 +22,8 @@
 \code{se} \tab standard error for the logarithm of the adjusted risk estimates.\cr
 \code{area} \tab geographical area of the published study.\cr
 \code{unit} \tab unit of measurement for red meat consumption (for dose0).\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from ten studies on the relation between processed meat consumption
 and bladder cancer.

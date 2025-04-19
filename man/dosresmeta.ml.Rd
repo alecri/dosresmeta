@@ -20,9 +20,7 @@ dosresmeta.reml(Xlist, Zlist, ylist, Slist, nalist, q, nall, control, ...)
 
 \item{nalist}{a m-dimensional list of k-dimensional study-specific logical vectors, identifying missing outcomes.}
 
-\item{q}{numeric scalars: number of predictors, number of observations (excluding missing).}
-
-\item{nall}{numeric scalars: number of predictors, number of observations (excluding missing).}
+\item{q, nall}{numeric scalars: number of predictors, number of observations (excluding missing).}
 
 \item{control}{list of parameters for controlling the fitting process, usually internally set to default values by \code{dosresmeta.control}.}
 

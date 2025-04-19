@@ -4,7 +4,8 @@
 \name{fish_ra}
 \alias{fish_ra}
 \title{Six studies on the relation between fish consumption and rheumatoid arthritis risk}
-\format{A data frame with 22 observations on the following 12 variables:
+\format{
+A data frame with 22 observations on the following 12 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author.\cr
@@ -18,7 +19,8 @@
 \code{urr} \tab upper bound for the confidence limits of the adjusted risk estimates.\cr
 \code{logrr} \tab natural logarithm of the adjusted odds ratio.\cr
 \code{se} \tab standard error for the logarithm of the adjusted odds ratio\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from six studies on the relation between fish consumption
 and rheumatoid arthritis risk

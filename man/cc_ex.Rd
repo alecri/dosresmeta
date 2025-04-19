@@ -4,7 +4,8 @@
 \name{cc_ex}
 \alias{cc_ex}
 \title{Case-control data on alcohol and breast cancer risk}
-\format{A data frame with 4 observations on the following 10 variables:
+\format{
+A data frame with 4 observations on the following 10 variables:
 \tabular{ll}{
 \code{gday} \tab label for exposure levels.\cr
 \code{dose} \tab assigned dose levels.\cr
@@ -16,7 +17,8 @@
 \code{lb} \tab lower bound for the confidence limits of the adjusted odds ratios.\cr
 \code{ub} \tab upper bound for the confidence limits of the adjusted odds ratios.\cr
 \code{logrr} \tab natural logarithm of the adjusted odds ratios.\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from a case-control study
 on alcohol and breast cancer, first presented by Rohan and McMichael.

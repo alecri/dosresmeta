@@ -4,7 +4,8 @@
 \name{ci_ex}
 \alias{ci_ex}
 \title{Cumulative incidence data on high-fat dairy food and colorectal cancer risk}
-\format{A data frame with 5 observations on the following 8 variables:
+\format{
+A data frame with 5 observations on the following 8 variables:
 \tabular{ll}{
 \code{dose} \tab assigned dose levels.\cr
 \code{case} \tab number of cases for each exposure level.\cr
@@ -14,7 +15,8 @@
 \code{ub} \tab upper bound for the confidence limits of the adjusted risk ratios.\cr
 \code{logrr} \tab natural logarithm of adjusted risk ratios.\cr
 \code{se} \tab standard error for the logarithm of the adjusted risk ratios.\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from a cumlative-incidence study
 on high-fat dairy food intake and risk of colorectal cancer, first presented by Larsson, Bergkvist, and Wolk (2005).

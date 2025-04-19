@@ -1,4 +1,5 @@
 Version: 1.0
+ProjectId: fd498357-582c-46d5-8b4b-07671d496997
 
 RestoreWorkspace: Default
 SaveWorkspace: Default
@@ -15,5 +16,6 @@ LaTeX: pdfLaTeX
 BuildType: Package
 PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
-PackageCheckArgs: --as-cran
+PackageBuildArgs: --compact-vignettes=both
+PackageCheckArgs: --as-cran --compact-vignettes="gs+qpdf"
 PackageRoxygenize: rd,collate,namespace

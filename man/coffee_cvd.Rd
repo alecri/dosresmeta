@@ -4,7 +4,8 @@
 \name{coffee_cvd}
 \alias{coffee_cvd}
 \title{Thirteen prospective studies on the relation between coffee consumption and cardiovascular mortality}
-\format{A data frame with 100 observations on the following 12 variables:
+\format{
+A data frame with 100 observations on the following 12 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author.\cr
@@ -18,7 +19,8 @@
 \code{gender} \tab character variable for the gender of the partecipants.\cr
 \code{area} \tab character variable for the study location.\cr
 \code{smoking} \tab character variable for the type of smoking adjustment.\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from thirteen prospective studies on the relation between coffee consumption
 and cardiovascular mortality.

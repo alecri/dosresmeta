@@ -4,7 +4,8 @@
 \name{coffee_cancer}
 \alias{coffee_cancer}
 \title{Eight prospective studies on the relation between coffee consumption and cancer mortality}
-\format{A data frame with 59 observations on the following 11 variables:
+\format{
+A data frame with 59 observations on the following 11 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author.\cr
@@ -17,7 +18,8 @@
 \code{se} \tab standard error for the logarithm of the adjusted risk estimates.\cr
 \code{gender} \tab factor variable for the gender of the partecipants.\cr
 \code{area} \tab factor variable for the study location.\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from eight prospective studies on the relation between coffee consumption
 and cancer mortality.

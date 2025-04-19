@@ -4,7 +4,8 @@
 \name{oc_breast}
 \alias{oc_breast}
 \title{Twenty-two case-control studies on the relation between oral contraceptives use and breast cancer}
-\format{A data frame with 113 observations on the following 14 variables:
+\format{
+A data frame with 113 observations on the following 14 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author.\cr
@@ -20,7 +21,8 @@
 \code{se} \tab standard error for the logarithm of the adjusted odds ratios.\cr
 \code{menopause} \tab indicator variable for a study that included postmenopausal women (1 = yes).\cr
 \code{period} \tab final year of case accrual (surrogate for the changing formulations of oral contraceptives over time). \cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from twenty-two case-control 
 studies on the relation between oral contraceptives use and breast cancer

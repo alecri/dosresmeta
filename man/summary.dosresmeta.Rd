@@ -10,8 +10,12 @@
 
 \method{summary}{dosresmeta}(object, ci.level = 0.95, ...)
 
-\method{print}{summary.dosresmeta}(x, digits = max(3, getOption("digits")
-  - 3), signif.stars = getOption("show.signif.stars"), ...)
+\method{print}{summary.dosresmeta}(
+  x,
+  digits = max(3, getOption("digits") - 3),
+  signif.stars = getOption("show.signif.stars"),
+  ...
+)
 }
 \arguments{
 \item{x}{an object of class \code{dosresmeta} or \code{summary.dosresmeta} produced by \code{\link{dosresmeta}} or \code{summary.dosresmeta}, respectively.}

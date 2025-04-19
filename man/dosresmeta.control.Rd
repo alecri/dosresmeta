@@ -4,12 +4,25 @@
 \alias{dosresmeta.control}
 \title{Ancillary Parameters for Controlling the Fit in dosresmeta Models}
 \usage{
-dosresmeta.control(optim = list(), showiter = FALSE, maxiter = 100,
-  initPsi = NULL, Psifix = NULL, Scor = NULL, addSlist = NULL,
-  inputna = FALSE, inputvar = 10^4, loglik.iter = "hybrid",
-  igls.inititer = 10, gr = FALSE, hessian = FALSE, vc.adj = TRUE,
-  reltol = sqrt(.Machine$double.eps), checkPD = NULL,
-  set.negeigen = sqrt(.Machine$double.eps))
+dosresmeta.control(
+  optim = list(),
+  showiter = FALSE,
+  maxiter = 100,
+  initPsi = NULL,
+  Psifix = NULL,
+  Scor = NULL,
+  addSlist = NULL,
+  inputna = FALSE,
+  inputvar = 10^4,
+  loglik.iter = "hybrid",
+  igls.inititer = 10,
+  gr = FALSE,
+  hessian = FALSE,
+  vc.adj = TRUE,
+  reltol = sqrt(.Machine$double.eps),
+  checkPD = NULL,
+  set.negeigen = sqrt(.Machine$double.eps)
+)
 }
 \arguments{
 \item{optim}{list of parameters passed to the control argument of the function optim, which performs the quasi-Newton optimization in likelihood-based 
@@ -61,7 +74,7 @@ A list with components named as the arguments.
 \description{
 This internal function sets the parameter options used for fitting dose-response meta-analytical models, 
 commonly to pre-specified default values. It is usually internally called by \code{\link{dosresmeta.fit}}.
-The function has many more arguments than needed for dosresmeta. For more details see \code{\link{mixmeta.control}}.
+The function has many more arguments than needed for dosresmeta. For more details see \code{\link[mixmeta]{mixmeta.control}}.
 }
 \examples{
 ## Loading data

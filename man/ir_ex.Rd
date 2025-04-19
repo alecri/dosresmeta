@@ -4,7 +4,8 @@
 \name{ir_ex}
 \alias{ir_ex}
 \title{Incidence-rate data on fiber intake and coronary heart disease risk}
-\format{A data frame with 5 observations on the following 8 variables:
+\format{
+A data frame with 5 observations on the following 8 variables:
 \tabular{ll}{
 \code{dose} \tab assigned dose levels.\cr
 \code{cases} \tab number of cases for each exposure level.\cr
@@ -14,7 +15,8 @@
 \code{ub} \tab upper bound for the confidence limits of the adjusted incidence rate ratios.\cr
 \code{logrr} \tab natural logarithm of adjusted incidence rate ratios.\cr
 \code{se} \tab standard error for the logarithm of the adjusted incidence rate ratios.\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from incidence-rate data 
 investigating the association between the long-term intake of dietary fiber and 

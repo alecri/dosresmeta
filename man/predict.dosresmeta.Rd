@@ -4,9 +4,21 @@
 \alias{predict.dosresmeta}
 \title{Predicted Values from dosresmeta Models}
 \usage{
-\method{predict}{dosresmeta}(object, newdata, xref, expo = FALSE,
-  xref_vec, ci.incl = TRUE, se.incl = FALSE, xref_pos = 1, delta,
-  order = FALSE, ci.level = 0.95, ...)
+\method{predict}{dosresmeta}(
+  object,
+  newdata,
+  xref,
+  expo = FALSE,
+  xref_vec,
+  ci.incl = TRUE,
+  se.incl = FALSE,
+  xref_pos = 1,
+  delta,
+  order = FALSE,
+  ci.level = 0.95,
+  safe_sort2stage = TRUE,
+  ...
+)
 }
 \arguments{
 \item{object}{an object of class \code{dosreseta}.}
@@ -30,6 +42,8 @@
 \item{order}{logical to indicate if the predictions need to be sorted by exposure levels.}
 
 \item{ci.level}{a numerical value between 0 and 1, specifying the confidence level for the computation of confidence intervals.}
+
+\item{safe_sort2stage}{logical value to ensure the correct order of coefficients for prediction. Only needed for 2stage.}
 
 \item{\dots}{further arguments passed to or from other methods.}
 }

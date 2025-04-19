@@ -1,8 +1,8 @@
 Package: dosresmeta
 Type: Package
 Title: Multivariate Dose-Response Meta-Analysis
-Version: 2.1.1
-Date: 2019-07-24
+Version: 2.2.0
+Date: 2025-04-18
 Authors@R: person("Alessio", "Crippa", email = "alessio.crippa@ki.se",
                   role = c("aut", "cre"))
 Maintainer: Alessio Crippa <alessio.crippa@ki.se>
@@ -14,7 +14,7 @@ BugReports: https://github.com/alecri/dosresmeta/issues
 License: GPL-2
 Depends:
     mixmeta
-RoxygenNote: 6.1.1
+RoxygenNote: 7.3.2
 Encoding: UTF-8
 Suggests: knitr, rmarkdown, rms
 VignetteBuilder: knitr

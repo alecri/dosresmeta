@@ -4,7 +4,8 @@
 \name{red_bc}
 \alias{red_bc}
 \title{Twelve studies on the relation between red meat and bladder cancer}
-\format{A data frame with 74 observations on the following 15 variables:
+\format{
+A data frame with 74 observations on the following 15 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author.\cr
@@ -21,7 +22,8 @@
 \code{se} \tab standard error for the logarithm of the adjusted risk estimates.\cr
 \code{area} \tab geographical area of the published study.\cr
 \code{unit} \tab unit of measurement for red meat consumption (for dose0).\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from twelve studies on the relation between red meat consumption
 and bladder cancer.

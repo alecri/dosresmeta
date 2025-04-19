@@ -4,7 +4,8 @@
 \name{bmi_rc}
 \alias{bmi_rc}
 \title{Four case-control studies on the relation between Body Mass Index and renal cell cancer}
-\format{A data frame with 33 observations on the following 13 variables:
+\format{
+A data frame with 33 observations on the following 13 variables:
 \tabular{ll}{
 \code{id} \tab id of the studies included in the analysis.\cr
 \code{author} \tab names of the first author and year of publication.\cr
@@ -19,7 +20,8 @@
 \code{ub_or} \tab upper bound for the confidence limits of the adjusted odds ratios.\cr
 \code{logor} \tab natural logarithm of the adjusted odds ratios.\cr
 \code{se_logor} \tab standard error for the logarithm of the adjusted odds ratios.\cr
-}}
+}
+}
 \description{
 The dataset reports the summarized dose-response results from four cases-control studies on the relation
  Body Mass Index and renal cell cancer

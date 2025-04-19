@@ -59,7 +59,7 @@ applicable to objects of class "mixmeta", such as fitted, residuals, AIC, BIC an
 }
 
 \seealso{
-\code{\link{dosresmeta}}, \code{\link{dosresmeta-package}}, \code{\link{mixmetaObject}}
+\code{\link{dosresmeta}}, \code{\link{dosresmeta-package}}, \code{\link[mixmeta]{mixmetaObject}}
 }
 \author{
 Alessio Crippa, \email{alessio.crippa@ki.se}
