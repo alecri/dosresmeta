@@ -66,7 +66,7 @@
 #'
 #' Method functions are available for objects of class "\code{dosremeta}" (see \code{\link{dosresmetaObject}} for a complete list). The method \code{\link{summary}}
 #' produces a list of class "\code{summary.dosremeta}" for summarizing the fit of the model and providing additional results. The method function \code{\link{predict}}
-#' computes predicted values, optionally for a set of new values of the predictors. \code{\link{blup}} gives the (empirical) best linear unbiased predictions for the unobserved random-effects.
+#' computes predicted values, optionally for a set of new values of the predictors. \code{blup} gives the (empirical) best linear unbiased predictions for the unobserved random-effects.
 #' Other default or specific method functions for regression can be used on objects of class "\code{dosremeta}", such as \code{logLik}, \code{AIC} and \code{BIC}, among others.
 #' The method function \code{qtest.dosresmeta} (producing an object with class of the same name) performs the Cochran Q test for (residual) heterogeneity currently appropriate only for the two-stage approach.
 #'
